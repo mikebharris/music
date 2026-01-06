@@ -104,20 +104,20 @@ type computeJustIntervalsFn func() []JustInterval
 
 func computePtolemeicIntenseDiatonicScale(mode MusicalMode) []JustInterval {
 	var intervalMap = map[MusicalMode][]JustInterval{
-		Lydian:     {greaterMajorSecond, lesserMajorSecond, greaterMajorSecond, diatonicSemitone, lesserMajorSecond, greaterMajorSecond, diatonicSemitone},
-		Ionian:     {greaterMajorSecond, lesserMajorSecond, diatonicSemitone, greaterMajorSecond, lesserMajorSecond, greaterMajorSecond, diatonicSemitone},
-		Mixolydian: {greaterMajorSecond, lesserMajorSecond, diatonicSemitone, greaterMajorSecond, lesserMajorSecond, diatonicSemitone, greaterMajorSecond},
-		Dorian:     {greaterMajorSecond, diatonicSemitone, lesserMajorSecond, greaterMajorSecond, lesserMajorSecond, diatonicSemitone, greaterMajorSecond},
-		Aeolian:    {greaterMajorSecond, diatonicSemitone, lesserMajorSecond, greaterMajorSecond, diatonicSemitone, greaterMajorSecond, lesserMajorSecond},
-		Phrygian:   {diatonicSemitone, greaterMajorSecond, lesserMajorSecond, greaterMajorSecond, diatonicSemitone, greaterMajorSecond, lesserMajorSecond},
-		Locrian:    {diatonicSemitone, greaterMajorSecond, lesserMajorSecond, diatonicSemitone, greaterMajorSecond, lesserMajorSecond, greaterMajorSecond},
+		Lydian:     {GreaterMajorSecond, LesserMajorSecond, GreaterMajorSecond, DiatonicSemitone, LesserMajorSecond, GreaterMajorSecond, DiatonicSemitone},
+		Ionian:     {GreaterMajorSecond, LesserMajorSecond, DiatonicSemitone, GreaterMajorSecond, LesserMajorSecond, GreaterMajorSecond, DiatonicSemitone},
+		Mixolydian: {GreaterMajorSecond, LesserMajorSecond, DiatonicSemitone, GreaterMajorSecond, LesserMajorSecond, DiatonicSemitone, GreaterMajorSecond},
+		Dorian:     {GreaterMajorSecond, DiatonicSemitone, LesserMajorSecond, GreaterMajorSecond, LesserMajorSecond, DiatonicSemitone, GreaterMajorSecond},
+		Aeolian:    {GreaterMajorSecond, DiatonicSemitone, LesserMajorSecond, GreaterMajorSecond, DiatonicSemitone, GreaterMajorSecond, LesserMajorSecond},
+		Phrygian:   {DiatonicSemitone, GreaterMajorSecond, LesserMajorSecond, GreaterMajorSecond, DiatonicSemitone, GreaterMajorSecond, LesserMajorSecond},
+		Locrian:    {DiatonicSemitone, GreaterMajorSecond, LesserMajorSecond, DiatonicSemitone, GreaterMajorSecond, LesserMajorSecond, GreaterMajorSecond},
 	}
 
 	var intervals = []JustInterval{Unison}
 	var interval = Unison
 
 	for _, v := range intervalMap[mode] {
-		interval = JustInterval{numerator: interval.numerator * v.numerator, denominator: interval.denominator * v.denominator}.simplify()
+		interval = JustInterval{numerator: interval.numerator * v.numerator, denominator: interval.denominator * v.denominator}.Simplify()
 		intervals = append(intervals, interval)
 	}
 
@@ -129,13 +129,13 @@ func computePythagoreanIntervals() []JustInterval {
 	var intervals []JustInterval
 	for i := -fifthsFromTonicToCompute; i <= fifthsFromTonicToCompute; i++ {
 		if i < 0 {
-			intervals = append(intervals, PerfectFifth.ToPowerOf(i).reciprocal().octaveReduce())
+			intervals = append(intervals, PerfectFifth.ToPowerOf(i).Reciprocal().OctaveReduce())
 		} else {
-			intervals = append(intervals, PerfectFifth.ToPowerOf(i).octaveReduce())
+			intervals = append(intervals, PerfectFifth.ToPowerOf(i).OctaveReduce())
 		}
 	}
 
-	intervals = append(intervals, octave)
+	intervals = append(intervals, Octave)
 	slices.SortFunc(intervals, func(i, j JustInterval) int {
 		return i.sortWith(j)
 	})
@@ -145,13 +145,13 @@ func computePythagoreanIntervals() []JustInterval {
 func compute5LimitPythagoreanIntervals() []JustInterval {
 	var intervals []JustInterval
 	for _, interval := range computePythagoreanIntervals() {
-		if interval.isPerfect() {
+		if interval.IsPerfect() {
 			intervals = append(intervals, interval)
 			continue
 		}
 
-		graveRatio := interval.add(acuteUnison)
-		acuteRatio := interval.add(graveUnison)
+		graveRatio := interval.Add(AcuteUnison)
+		acuteRatio := interval.Add(GraveUnison)
 
 		if graveRatio.denominator < acuteRatio.denominator {
 			intervals = append(intervals, graveRatio)
@@ -169,7 +169,7 @@ func computeJustScale(multipliers [][]uint, filter intervalFilterFunction) []Jus
 	for r := 50.0; r <= centsInOctave; r += 100 {
 		var intervalsInNoteRange []JustInterval
 		for _, interval := range poolOfPotentialIntervals {
-			cents := interval.toCents()
+			cents := interval.ToCents()
 			if cents >= r && cents < r+100 {
 				intervalsInNoteRange = append(intervalsInNoteRange, interval)
 			}
@@ -218,5 +218,5 @@ func buildMultiplierTablesFrom(multipliers ...[][]uint) [][]uint {
 }
 
 func computeSazScale() []JustInterval {
-	return intervalsFromIntegers([][]uint{{1, 1}, {18, 17}, {12, 11}, {9, 8}, {81, 68}, {27, 22}, {81, 64}, {4, 3}, {24, 17}, {16, 11}, {3, 2}, {27, 17}, {18, 11}, {27, 16}, {16, 9}, {32, 17}, {64, 33}, {2, 1}})
+	return IntervalsFromIntegers([][]uint{{1, 1}, {18, 17}, {12, 11}, {9, 8}, {81, 68}, {27, 22}, {81, 64}, {4, 3}, {24, 17}, {16, 11}, {3, 2}, {27, 17}, {18, 11}, {27, 16}, {16, 9}, {32, 17}, {64, 33}, {2, 1}})
 }

@@ -14,7 +14,7 @@ type JustInterval struct {
 }
 
 func newInterval(numerator, denominator uint) JustInterval {
-	return JustInterval{numerator: numerator, denominator: denominator}.simplify()
+	return JustInterval{numerator: numerator, denominator: denominator}.Simplify()
 }
 
 func (i JustInterval) Numerator() uint {
@@ -25,15 +25,15 @@ func (i JustInterval) Denominator() uint {
 	return i.denominator
 }
 
-func (i JustInterval) isUnison() bool {
+func (i JustInterval) IsUnison() bool {
 	return i.numerator == 1 && i.denominator == 1
 }
 
-func (i JustInterval) isEqualTo(other JustInterval) bool {
+func (i JustInterval) IsEqualTo(other JustInterval) bool {
 	return i.numerator == other.numerator && i.denominator == other.denominator
 }
 
-func (i JustInterval) isDiminishedFifth() bool {
+func (i JustInterval) IsDiminishedFifth() bool {
 	return i.numerator == 64 && i.denominator == 45
 }
 
@@ -53,33 +53,33 @@ func (i JustInterval) IsGreaterMinorSeventh() bool {
 	return i.numerator == 9 && i.denominator == 5
 }
 
-func (i JustInterval) add(other JustInterval) JustInterval {
+func (i JustInterval) Add(other JustInterval) JustInterval {
 	interval := JustInterval{
 		numerator:   i.numerator * other.numerator,
 		denominator: i.denominator * other.denominator,
-	}.simplify()
+	}.Simplify()
 
 	return interval
 }
 
-func (i JustInterval) isPerfectFourth() bool {
+func (i JustInterval) IsPerfectFourth() bool {
 	return i.numerator == 4 && i.denominator == 3
 }
 
-func (i JustInterval) isPerfect() bool {
-	simplestForm := i.octaveReduce().simplify()
-	return simplestForm.isUnison() || simplestForm.isPerfectFourth() || simplestForm.isPerfectFifth() || simplestForm.isOctave()
+func (i JustInterval) IsPerfect() bool {
+	simplestForm := i.OctaveReduce().Simplify()
+	return simplestForm.IsUnison() || simplestForm.IsPerfectFourth() || simplestForm.IsPerfectFifth() || simplestForm.IsOctave()
 }
 
-func (i JustInterval) isPerfectFifth() bool {
+func (i JustInterval) IsPerfectFifth() bool {
 	return i.numerator == 3 && i.denominator == 2
 }
 
-func (i JustInterval) isOctave() bool {
+func (i JustInterval) IsOctave() bool {
 	return i.numerator == 2 && i.denominator == 1
 }
 
-func (i JustInterval) simplify() JustInterval {
+func (i JustInterval) Simplify() JustInterval {
 	if i.denominator == 0 {
 		return i
 	}
@@ -97,7 +97,7 @@ func (i JustInterval) simplify() JustInterval {
 	return i
 }
 
-func (i JustInterval) octaveReduce() JustInterval {
+func (i JustInterval) OctaveReduce() JustInterval {
 	for i.ToFloat() >= 2.0 || i.ToFloat() < 1.0 {
 		if i.ToFloat() < 1.0 {
 			i.numerator *= 2
@@ -109,19 +109,19 @@ func (i JustInterval) octaveReduce() JustInterval {
 	return i
 }
 
-func (i JustInterval) lessThan(other JustInterval) bool {
+func (i JustInterval) LessThan(other JustInterval) bool {
 	return i.numerator*other.denominator < other.numerator*i.denominator
 }
 
-func (i JustInterval) greaterThan(other JustInterval) bool {
-	return !i.lessThan(other) && !i.isEqualTo(other)
+func (i JustInterval) GreaterThan(other JustInterval) bool {
+	return !i.LessThan(other) && !i.IsEqualTo(other)
 }
 
 func (i JustInterval) Subtract(other JustInterval) JustInterval {
-	if i.lessThan(other) {
-		return JustInterval{numerator: i.denominator * other.numerator, denominator: i.numerator * other.denominator}.simplify()
-	} else if i.greaterThan(other) {
-		return JustInterval{numerator: i.numerator * other.denominator, denominator: i.denominator * other.numerator}.simplify()
+	if i.LessThan(other) {
+		return JustInterval{numerator: i.denominator * other.numerator, denominator: i.numerator * other.denominator}.Simplify()
+	} else if i.GreaterThan(other) {
+		return JustInterval{numerator: i.numerator * other.denominator, denominator: i.denominator * other.numerator}.Simplify()
 	}
 	return JustInterval{numerator: 1, denominator: 1}
 }
@@ -144,10 +144,10 @@ func (i JustInterval) ToTemperedInterval() TemperedInterval {
 }
 
 func (i JustInterval) ToPowerOf(p int) JustInterval {
-	return JustInterval{numerator: uint(math.Pow(float64(i.numerator), math.Abs(float64(p)))), denominator: uint(math.Pow(float64(i.denominator), math.Abs(float64(p))))}.simplify()
+	return JustInterval{numerator: uint(math.Pow(float64(i.numerator), math.Abs(float64(p)))), denominator: uint(math.Pow(float64(i.denominator), math.Abs(float64(p))))}.Simplify()
 }
 
-func (i JustInterval) reciprocal() JustInterval {
+func (i JustInterval) Reciprocal() JustInterval {
 	interval := JustInterval{denominator: i.numerator, numerator: i.denominator}
 	return interval
 }
@@ -157,16 +157,16 @@ func perfectFourth() JustInterval {
 }
 
 var Unison = JustInterval{numerator: 1, denominator: 1}
-var acuteUnison = JustInterval{numerator: 81, denominator: 80}
+var AcuteUnison = JustInterval{numerator: 81, denominator: 80}
 var SyntonicComma = JustInterval{numerator: 81, denominator: 80}
-var dieses = JustInterval{numerator: 128, denominator: 125}
-var justChromaticSemitone = JustInterval{numerator: 25, denominator: 24}
-var graveUnison = JustInterval{numerator: 80, denominator: 81}
-var lesserMajorSecond = JustInterval{numerator: 10, denominator: 9}
-var greaterMajorSecond = JustInterval{numerator: 9, denominator: 8}
-var diatonicSemitone = JustInterval{numerator: 16, denominator: 15}
+var Dieses = JustInterval{numerator: 128, denominator: 125}
+var JustChromaticSemitone = JustInterval{numerator: 25, denominator: 24}
+var GraveUnison = JustInterval{numerator: 80, denominator: 81}
+var LesserMajorSecond = JustInterval{numerator: 10, denominator: 9}
+var GreaterMajorSecond = JustInterval{numerator: 9, denominator: 8}
+var DiatonicSemitone = JustInterval{numerator: 16, denominator: 15}
 var PerfectFifth = JustInterval{numerator: 3, denominator: 2}
-var octave = JustInterval{numerator: 2, denominator: 1}
+var Octave = JustInterval{numerator: 2, denominator: 1}
 
 var intervalNames = []JustInterval{
 	{1, 1, "Perfect Unison"},
@@ -219,23 +219,23 @@ func (i JustInterval) String() string {
 	return fmt.Sprintf("%d:%d", i.numerator, i.denominator)
 }
 
-func (i JustInterval) toCents() float64 {
+func (i JustInterval) ToCents() float64 {
 	return math.Log10(float64(i.numerator)/float64(i.denominator)) / math.Log10(2) * 1200
 }
 
-func intervalsFromIntegers(integers [][]uint) []JustInterval {
+func IntervalsFromIntegers(integers [][]uint) []JustInterval {
 	var intervals []JustInterval
 	for _, pair := range integers {
-		intervals = append(intervals, fromIntArray(pair))
+		intervals = append(intervals, FromIntArray(pair))
 	}
 	return intervals
 }
 
-func fromIntArray(i []uint) JustInterval {
-	return JustInterval{numerator: i[0], denominator: i[1]}.simplify()
+func FromIntArray(i []uint) JustInterval {
+	return JustInterval{numerator: i[0], denominator: i[1]}.Simplify()
 }
 
-func sortIntervals(intervals []JustInterval) {
+func SortIntervals(intervals []JustInterval) {
 	slices.SortFunc(intervals, func(i, j JustInterval) int {
 		return i.sortWith(j)
 	})
@@ -251,8 +251,8 @@ func multipliers(base uint) [][]uint {
 func justIntervalsFromMultipliers(multiplierList [][]uint, filter intervalFilterFunction) []JustInterval {
 	var intervals []JustInterval
 	for _, multiplier := range multiplierList {
-		interval := JustInterval{numerator: multiplier[0], denominator: multiplier[1]}.octaveReduce()
-		if interval.isDiminishedFifth() {
+		interval := JustInterval{numerator: multiplier[0], denominator: multiplier[1]}.OctaveReduce()
+		if interval.IsDiminishedFifth() {
 			continue
 		}
 		if filter(interval) {
@@ -260,8 +260,8 @@ func justIntervalsFromMultipliers(multiplierList [][]uint, filter intervalFilter
 		}
 		intervals = append(intervals, interval)
 	}
-	intervals = append(intervals, octave)
-	sortIntervals(intervals)
+	intervals = append(intervals, Octave)
+	SortIntervals(intervals)
 	return intervals
 }
 

@@ -83,7 +83,7 @@ func TestInterval_add(t *testing.T) {
 				numerator:   tt.fields.numerator,
 				denominator: tt.fields.denominator,
 			}
-			if got := i.add(tt.args.other); !reflect.DeepEqual(got, tt.want) {
+			if got := i.Add(tt.args.other); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("add() = %v, want %v", got, tt.want)
 			}
 		})
@@ -153,7 +153,7 @@ func TestInterval_greaterThan(t *testing.T) {
 				numerator:   tt.fields.numerator,
 				denominator: tt.fields.denominator,
 			}
-			if got := i.greaterThan(tt.args.other); got != tt.want {
+			if got := i.GreaterThan(tt.args.other); got != tt.want {
 				t.Errorf("greaterThan() = %v, want %v", got, tt.want)
 			}
 		})
@@ -185,7 +185,7 @@ func TestInterval_isDiminishedFifth(t *testing.T) {
 				numerator:   tt.fields.numerator,
 				denominator: tt.fields.denominator,
 			}
-			if got := i.isDiminishedFifth(); got != tt.want {
+			if got := i.IsDiminishedFifth(); got != tt.want {
 				t.Errorf("isDiminishedFifth() = %v, want %v", got, tt.want)
 			}
 		})
@@ -241,7 +241,7 @@ func TestInterval_isEqualTo(t *testing.T) {
 				numerator:   tt.fields.numerator,
 				denominator: tt.fields.denominator,
 			}
-			if got := i.isEqualTo(tt.args.other); got != tt.want {
+			if got := i.IsEqualTo(tt.args.other); got != tt.want {
 				t.Errorf("isEqualTo() = %v, want %v", got, tt.want)
 			}
 		})
@@ -373,7 +373,7 @@ func TestInterval_isOctave(t *testing.T) {
 				numerator:   tt.fields.numerator,
 				denominator: tt.fields.denominator,
 			}
-			if got := i.isOctave(); got != tt.want {
+			if got := i.IsOctave(); got != tt.want {
 				t.Errorf("isOctave() = %v, want %v", got, tt.want)
 			}
 		})
@@ -429,7 +429,7 @@ func TestInterval_isPerfect(t *testing.T) {
 				numerator:   tt.fields.numerator,
 				denominator: tt.fields.denominator,
 			}
-			if got := i.isPerfect(); got != tt.want {
+			if got := i.IsPerfect(); got != tt.want {
 				t.Errorf("isPerfect() = %v, want %v", got, tt.want)
 			}
 		})
@@ -461,7 +461,7 @@ func TestInterval_isPerfectFifth(t *testing.T) {
 				numerator:   tt.fields.numerator,
 				denominator: tt.fields.denominator,
 			}
-			if got := i.isPerfectFifth(); got != tt.want {
+			if got := i.IsPerfectFifth(); got != tt.want {
 				t.Errorf("isPerfectFifth() = %v, want %v", got, tt.want)
 			}
 		})
@@ -486,7 +486,7 @@ func TestInterval_isPerfectFourth(t *testing.T) {
 				numerator:   tt.fields.numerator,
 				denominator: tt.fields.denominator,
 			}
-			if got := i.isPerfectFourth(); got != tt.want {
+			if got := i.IsPerfectFourth(); got != tt.want {
 				t.Errorf("isPerfectFourth() = %v, want %v", got, tt.want)
 			}
 		})
@@ -511,7 +511,7 @@ func TestInterval_isUnison(t *testing.T) {
 				numerator:   tt.fields.numerator,
 				denominator: tt.fields.denominator,
 			}
-			if got := i.isUnison(); got != tt.want {
+			if got := i.IsUnison(); got != tt.want {
 				t.Errorf("isUnison() = %v, want %v", got, tt.want)
 			}
 		})
@@ -581,7 +581,7 @@ func TestInterval_lessThan(t *testing.T) {
 				numerator:   tt.fields.numerator,
 				denominator: tt.fields.denominator,
 			}
-			if got := i.lessThan(tt.args.other); got != tt.want {
+			if got := i.LessThan(tt.args.other); got != tt.want {
 				t.Errorf("lessThan() = %v, want %v", got, tt.want)
 			}
 		})
@@ -652,7 +652,7 @@ func TestInterval_octaveReduce(t *testing.T) {
 				numerator:   tt.fields.numerator,
 				denominator: tt.fields.denominator,
 			}
-			if got := i.octaveReduce(); !reflect.DeepEqual(got, tt.want) {
+			if got := i.OctaveReduce(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("octaveReduce() = %#v, want %#v", got, tt.want)
 			}
 		})
@@ -687,7 +687,7 @@ func TestInterval_reciprocal(t *testing.T) {
 				numerator:   tt.fields.numerator,
 				denominator: tt.fields.denominator,
 			}
-			if got := i.reciprocal(); !reflect.DeepEqual(got, tt.want) {
+			if got := i.Reciprocal(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("reciprocal() = %#v, want %#v", got, tt.want)
 			}
 		})
@@ -722,7 +722,7 @@ func TestInterval_simplify(t *testing.T) {
 				numerator:   tt.fields.numerator,
 				denominator: tt.fields.denominator,
 			}
-			if got := i.simplify(); !reflect.DeepEqual(got, tt.want) {
+			if got := i.Simplify(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("simplify() = %v, want %v", got, tt.want)
 			}
 		})
@@ -841,7 +841,7 @@ func TestInterval_toCents(t *testing.T) {
 				numerator:   tt.fields.numerator,
 				denominator: tt.fields.denominator,
 			}
-			if got := i.toCents(); got != tt.want {
+			if got := i.ToCents(); got != tt.want {
 				t.Errorf("toCents() = %v, want %v", got, tt.want)
 			}
 		})
@@ -976,7 +976,7 @@ func Test_fromIntArray(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := fromIntArray(tt.args.i); !reflect.DeepEqual(got, tt.want) {
+			if got := FromIntArray(tt.args.i); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("fromIntArray() = %v, want %v", got, tt.want)
 			}
 		})
@@ -1006,7 +1006,7 @@ func Test_intervalsFromIntegers(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := intervalsFromIntegers(tt.args.integers); !reflect.DeepEqual(got, tt.want) {
+			if got := IntervalsFromIntegers(tt.args.integers); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("intervalsFromIntegers() = %v, want %v", got, tt.want)
 			}
 		})
@@ -1136,7 +1136,7 @@ func Test_sortIntervals(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sortIntervals(tt.args.intervals)
+			SortIntervals(tt.args.intervals)
 		})
 	}
 }
