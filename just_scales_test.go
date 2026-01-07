@@ -144,6 +144,26 @@ func Test_shouldReturnJustChromaticScaleWithLesserMajorSecondBasedOnPureRatios(t
 	assert.Equal(t, JustInterval{numerator: 2, denominator: 1}, intervals[12])
 }
 
+func Test_shouldReturnBespokeJustScaleBasedOnProvidedIntervals(t *testing.T) {
+	// Given
+	// Mike read the page at https://en.wikipedia.org/wiki/Five-limit_tuning
+
+	// When
+	scale := NewJustIntonationChromaticScaleWith("Bespoke scale based on provided ratios", [][]uint{{1, 1}, {14, 13}, {3, 2}, {16, 9}, {2, 1}})
+	intervals := scale.Intervals()
+
+	// Then
+	assert.Equal(t, "Just Intonation", scale.System())
+	assert.Equal(t, "Bespoke scale based on provided ratios", scale.Description())
+
+	assert.Equal(t, 5, len(intervals))
+	assert.Equal(t, JustInterval{numerator: 1, denominator: 1}, intervals[0])
+	assert.Equal(t, JustInterval{numerator: 14, denominator: 13}, intervals[1])
+	assert.Equal(t, JustInterval{numerator: 3, denominator: 2}, intervals[2])
+	assert.Equal(t, JustInterval{numerator: 16, denominator: 9}, intervals[3])
+	assert.Equal(t, JustInterval{numerator: 2, denominator: 1}, intervals[4])
+}
+
 func Test_shouldReturn7LimitJustChromaticScaleBasedOnPureRatios(t *testing.T) {
 	// Given
 	// Mike read the page at https://en.wikipedia.org/wiki/Five-limit_tuning

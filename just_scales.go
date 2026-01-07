@@ -88,6 +88,16 @@ func NewSazScale() JustScale {
 	}
 }
 
+func NewJustIntonationChromaticScaleWith(description string, intervals [][]uint) JustScale {
+	return JustScale{
+		system:      "Just Intonation",
+		description: description,
+		algorithm: func() []JustInterval {
+			return IntervalsFromIntegers(intervals)
+		},
+	}
+}
+
 func (s JustScale) System() string {
 	return s.system
 }
