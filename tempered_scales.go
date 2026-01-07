@@ -59,7 +59,7 @@ func computeQuarterCommaMeantoneScale() []TemperedInterval {
 }
 
 func computeMeantoneScale(fractionOfSyntonicCommaToTemperFifthsBy float64, extendScale bool) []TemperedInterval {
-	temperedFifth := PerfectFifth.ToFloat() * math.Pow(SyntonicComma.ToFloat(), -fractionOfSyntonicCommaToTemperFifthsBy)
+	temperedFifth := PerfectFifth().ToFloat() * math.Pow(SyntonicComma().ToFloat(), -fractionOfSyntonicCommaToTemperFifthsBy)
 
 	var ratiosOfNotesToFundamental = []TemperedInterval{2.0}
 	var fifthsFromTonic = 6
@@ -111,7 +111,7 @@ func computeBachScale() []TemperedInterval {
 	// Calculate tempered fifths
 	temperedFifths := make([]float64, 12)
 	for i := 0; i < 12; i++ {
-		temperedFifths[i] = 3.0 / 2.0 * math.Pow(SyntonicComma.ToFloat(), temperingFractions[i])
+		temperedFifths[i] = 3.0 / 2.0 * math.Pow(SyntonicComma().ToFloat(), temperingFractions[i])
 	}
 
 	// Derive ratios by walking the circle of fifths

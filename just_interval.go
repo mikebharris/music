@@ -152,21 +152,46 @@ func (i JustInterval) Reciprocal() JustInterval {
 	return interval
 }
 
-func perfectFourth() JustInterval {
-	return JustInterval{4, 3, "Perfect Fourth"}
+func PerfectFourth() JustInterval {
+	return JustInterval{numerator: 4, denominator: 3}
+}
+func Unison() JustInterval {
+	return JustInterval{numerator: 1, denominator: 1}
 }
 
-var Unison = JustInterval{numerator: 1, denominator: 1}
-var AcuteUnison = JustInterval{numerator: 81, denominator: 80}
-var SyntonicComma = JustInterval{numerator: 81, denominator: 80}
-var Dieses = JustInterval{numerator: 128, denominator: 125}
-var JustChromaticSemitone = JustInterval{numerator: 25, denominator: 24}
-var GraveUnison = JustInterval{numerator: 80, denominator: 81}
-var LesserMajorSecond = JustInterval{numerator: 10, denominator: 9}
-var GreaterMajorSecond = JustInterval{numerator: 9, denominator: 8}
-var DiatonicSemitone = JustInterval{numerator: 16, denominator: 15}
-var PerfectFifth = JustInterval{numerator: 3, denominator: 2}
-var Octave = JustInterval{numerator: 2, denominator: 1}
+func AcuteUnison() JustInterval {
+	return JustInterval{numerator: 81, denominator: 80}
+}
+
+func SyntonicComma() JustInterval {
+	return JustInterval{numerator: 81, denominator: 80}
+}
+func Dieses() JustInterval {
+	return JustInterval{numerator: 128, denominator: 125}
+}
+
+func JustChromaticSemitone() JustInterval {
+	return JustInterval{numerator: 25, denominator: 24}
+}
+
+func GraveUnison() JustInterval {
+	return JustInterval{numerator: 80, denominator: 81}
+}
+func LesserMajorSecond() JustInterval {
+	return JustInterval{numerator: 10, denominator: 9}
+}
+func GreaterMajorSecond() JustInterval {
+	return JustInterval{numerator: 9, denominator: 8}
+}
+func DiatonicSemitone() JustInterval {
+	return JustInterval{numerator: 16, denominator: 15}
+}
+func PerfectFifth() JustInterval {
+	return JustInterval{numerator: 3, denominator: 2}
+}
+func Octave() JustInterval {
+	return JustInterval{numerator: 2, denominator: 1}
+}
 
 var intervalNames = []JustInterval{
 	{1, 1, "Perfect Unison"},
@@ -223,6 +248,13 @@ func (i JustInterval) ToCents() float64 {
 	return math.Log10(float64(i.numerator)/float64(i.denominator)) / math.Log10(2) * 1200
 }
 
+func (i JustInterval) Diff(other JustInterval) JustInterval {
+	if i.LessThan(other) {
+		return other.Subtract(i)
+	}
+	return i.Subtract(other)
+}
+
 func IntervalsFromIntegers(integers [][]uint) []JustInterval {
 	var intervals []JustInterval
 	for _, pair := range integers {
@@ -260,7 +292,7 @@ func justIntervalsFromMultipliers(multiplierList [][]uint, filter intervalFilter
 		}
 		intervals = append(intervals, interval)
 	}
-	intervals = append(intervals, Octave)
+	intervals = append(intervals, Octave())
 	SortIntervals(intervals)
 	return intervals
 }

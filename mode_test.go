@@ -10,7 +10,7 @@ func TestMusicalMode_IsDiatonic(t *testing.T) {
 	}{
 		{
 			name: "Lydian is diatonic",
-			m:    Lydian,
+			m:    LydianMode,
 			want: true,
 		},
 		{
@@ -36,7 +36,7 @@ func TestMusicalMode_String(t *testing.T) {
 	}{
 		{
 			name: "ModeLydian string representation",
-			m:    Lydian,
+			m:    LydianMode,
 			want: "Lydian",
 		},
 	}

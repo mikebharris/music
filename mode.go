@@ -1,20 +1,20 @@
 package music
 
 const (
-	Lydian     MusicalMode = "Lydian"
-	Ionian     MusicalMode = "Ionian"
-	Mixolydian MusicalMode = "Mixolydian"
-	Dorian     MusicalMode = "Dorian"
-	Aeolian    MusicalMode = "Aeolian"
-	Phrygian   MusicalMode = "Phrygian"
-	Locrian    MusicalMode = "Locrian"
+	LydianMode     MusicalMode = "Lydian"
+	IonianMode     MusicalMode = "Ionian"
+	MixolydianMode MusicalMode = "Mixolydian"
+	DorianMode     MusicalMode = "Dorian"
+	AeolianMode    MusicalMode = "Aeolian"
+	PhrygianMode   MusicalMode = "Phrygian"
+	LocrianMode    MusicalMode = "Locrian"
 )
 
 type MusicalMode string
 
 func (m MusicalMode) IsDiatonic() bool {
 	switch m {
-	case Lydian, Ionian, Mixolydian, Dorian, Aeolian, Phrygian, Locrian:
+	case LydianMode, IonianMode, MixolydianMode, DorianMode, AeolianMode, PhrygianMode, LocrianMode:
 		return true
 	default:
 		return false

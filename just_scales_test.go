@@ -202,7 +202,7 @@ func Test_shouldReturn13LimitJustChromaticScaleBasedOnPureRatios(t *testing.T) {
 
 func Test_ShouldReturnIntenseDiatonicScaleInLydianModeWithScaleDegrees(t *testing.T) {
 	// Given
-	scale := NewIntenseDiatonicScale(Lydian)
+	scale := NewIntenseDiatonicScale(LydianMode)
 
 	// When
 	intervals := scale.Intervals()
@@ -224,7 +224,7 @@ func Test_ShouldReturnIntenseDiatonicScaleInLydianModeWithScaleDegrees(t *testin
 
 func Test_ShouldReturnIntenseDiatonicScaleInIonianModeWithScaleDegrees(t *testing.T) {
 	// Given
-	scale := NewIntenseDiatonicScale(Ionian)
+	scale := NewIntenseDiatonicScale(IonianMode)
 
 	// When
 	intervals := scale.Intervals()
@@ -246,7 +246,7 @@ func Test_ShouldReturnIntenseDiatonicScaleInIonianModeWithScaleDegrees(t *testin
 
 func Test_ShouldReturnIntenseDiatonicScaleInMixolydianModeWithScaleDegrees(t *testing.T) {
 	// Given
-	scale := NewIntenseDiatonicScale(Mixolydian)
+	scale := NewIntenseDiatonicScale(MixolydianMode)
 
 	// When
 	intervals := scale.Intervals()
@@ -268,7 +268,7 @@ func Test_ShouldReturnIntenseDiatonicScaleInMixolydianModeWithScaleDegrees(t *te
 
 func Test_ShouldReturnIntenseDiatonicScaleInDorianModeWithScaleDegrees(t *testing.T) {
 	// Given
-	scale := NewIntenseDiatonicScale(Dorian)
+	scale := NewIntenseDiatonicScale(DorianMode)
 
 	// When
 	intervals := scale.Intervals()
@@ -290,7 +290,7 @@ func Test_ShouldReturnIntenseDiatonicScaleInDorianModeWithScaleDegrees(t *testin
 
 func Test_ShouldReturnIntenseDiatonicScaleInAeolianModeWithScaleDegrees(t *testing.T) {
 	// Given
-	scale := NewIntenseDiatonicScale(Aeolian)
+	scale := NewIntenseDiatonicScale(AeolianMode)
 
 	// When
 	intervals := scale.Intervals()
@@ -312,7 +312,7 @@ func Test_ShouldReturnIntenseDiatonicScaleInAeolianModeWithScaleDegrees(t *testi
 
 func Test_ShouldReturnIntenseDiatonicScaleInPhrygianModeWithScaleDegrees(t *testing.T) {
 	// Given
-	scale := NewIntenseDiatonicScale(Phrygian)
+	scale := NewIntenseDiatonicScale(PhrygianMode)
 
 	// When
 	intervals := scale.Intervals()
@@ -334,7 +334,7 @@ func Test_ShouldReturnIntenseDiatonicScaleInPhrygianModeWithScaleDegrees(t *test
 
 func Test_ShouldReturnIntenseDiatonicScaleInLocrianModeWithScaleDegrees(t *testing.T) {
 	// Given
-	scale := NewIntenseDiatonicScale(Locrian)
+	scale := NewIntenseDiatonicScale(LocrianMode)
 
 	// When
 	intervals := scale.Intervals()

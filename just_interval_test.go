@@ -90,6 +90,68 @@ func TestInterval_add(t *testing.T) {
 	}
 }
 
+func TestInterval_Diff(t *testing.T) {
+	type fields struct {
+		numerator   uint
+		denominator uint
+	}
+	type args struct {
+		other JustInterval
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   JustInterval
+	}{
+		{
+			name: "Difference between a lesser major second and a greater major second is a syntonic comma",
+			fields: fields{
+				numerator:   10,
+				denominator: 9,
+			},
+			args: args{
+				other: JustInterval{
+					numerator:   9,
+					denominator: 8,
+				},
+			},
+			want: JustInterval{
+				numerator:   81,
+				denominator: 80,
+			},
+		},
+		{
+			name: "Difference between a greater major second and a lesser major second is a syntonic comma",
+			fields: fields{
+				numerator:   9,
+				denominator: 8,
+			},
+			args: args{
+				other: JustInterval{
+					numerator:   10,
+					denominator: 9,
+				},
+			},
+			want: JustInterval{
+				numerator:   81,
+				denominator: 80,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			i := JustInterval{
+				numerator:   tt.fields.numerator,
+				denominator: tt.fields.denominator,
+			}
+			if got := i.Diff(tt.args.other); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Diff() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestInterval_greaterThan(t *testing.T) {
 	type fields struct {
 		numerator   uint
@@ -1040,7 +1102,7 @@ func Test_justIntervalsFromMultipliers(t *testing.T) {
 			name: "Filter out intervals from multipliers",
 			args: args{
 				multiplierList: [][]uint{{3, 1}, {1, 1}, {1, 3}},
-				filter:         func(ratio JustInterval) bool { return ratio == PerfectFifth },
+				filter:         func(ratio JustInterval) bool { return ratio == PerfectFifth() },
 			},
 			want: []JustInterval{
 				{numerator: 1, denominator: 1},
