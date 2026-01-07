@@ -13,7 +13,7 @@ type JustInterval struct {
 	name        string
 }
 
-func newInterval(numerator, denominator uint) JustInterval {
+func NewInterval(numerator, denominator uint) JustInterval {
 	return JustInterval{numerator: numerator, denominator: denominator}.Simplify()
 }
 

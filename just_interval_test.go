@@ -1108,7 +1108,7 @@ func Test_newInterval(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newInterval(tt.args.numerator, tt.args.denominator); !reflect.DeepEqual(got, tt.want) {
+			if got := NewInterval(tt.args.numerator, tt.args.denominator); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newInterval() = %v, want %v", got, tt.want)
 			}
 		})
