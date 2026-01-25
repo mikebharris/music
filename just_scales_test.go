@@ -33,7 +33,7 @@ func Test_ShouldReturnPythagorean3LimitScaleWithExpectedScaleDegrees(t *testing.
 	assert.Equal(t, JustInterval{numerator: 2, denominator: 1}, intervals[13])
 }
 
-func Test_ShouldReturn5LimitScaleWithExpectedScaleDegrees(t *testing.T) {
+func Test_ShouldReturn5LimitScaleBuildFromPythagoreanWithExpectedScaleDegrees(t *testing.T) {
 	// Given
 	scale := New5LimitPythagoreanScale()
 
@@ -60,17 +60,17 @@ func Test_ShouldReturn5LimitScaleWithExpectedScaleDegrees(t *testing.T) {
 	assert.Equal(t, JustInterval{numerator: 2, denominator: 1}, intervals[13])
 }
 
-func Test_shouldReturnAsymmetricJustChromaticScaleBasedOnPureRatios(t *testing.T) {
+func Test_shouldReturnFiveLimitJustChromaticScaleBasedOnPureRatios(t *testing.T) {
 	// Given
 	// Mike read the page at https://en.wikipedia.org/wiki/Five-limit_tuning
 
 	// When
-	scale := New5LimitJustIntonationChromaticScale(Asymmetric)
+	scale := NewJustIntonationChromaticScaleWithLimit(5)
 	intervals := scale.Intervals()
 
 	// Then
 	assert.Equal(t, "5-limit Just Intonation", scale.System())
-	assert.Equal(t, "5-limit just intonation pure ratios derived from third- and fifth-partial ratios.", scale.Description())
+	assert.Equal(t, "Just Intonation chromatic scale based on 5-limit pure ratios.", scale.Description())
 
 	assert.Equal(t, 13, len(intervals))
 	assert.Equal(t, JustInterval{numerator: 1, denominator: 1}, intervals[0])
@@ -88,17 +88,51 @@ func Test_shouldReturnAsymmetricJustChromaticScaleBasedOnPureRatios(t *testing.T
 	assert.Equal(t, JustInterval{numerator: 2, denominator: 1}, intervals[12])
 }
 
-func Test_shouldReturnJustChromaticScaleWithLesserMinorSeventhBasedOnPureRatios(t *testing.T) {
+func Test_shouldReturnThirteenLimitJustChromaticScaleBasedOnPureRatios(t *testing.T) {
 	// Given
 	// Mike read the page at https://en.wikipedia.org/wiki/Five-limit_tuning
 
 	// When
-	scale := New5LimitJustIntonationChromaticScale(Symmetric1)
+	scale := NewJustIntonationChromaticScaleWithLimit(13)
+	intervals := scale.Intervals()
+
+	// Then
+	assert.Equal(t, "13-limit Just Intonation", scale.System())
+	assert.Equal(t, "Just Intonation chromatic scale based on 13-limit pure ratios.", scale.Description())
+
+	assert.Equal(t, 13, len(intervals))
+	assert.Equal(t, JustInterval{numerator: 1, denominator: 1}, intervals[0])
+	assert.Equal(t, JustInterval{numerator: 13, denominator: 12}, intervals[1])
+	assert.Equal(t, JustInterval{numerator: 8, denominator: 7}, intervals[2])
+	assert.Equal(t, JustInterval{numerator: 6, denominator: 5}, intervals[3])
+	assert.Equal(t, JustInterval{numerator: 5, denominator: 4}, intervals[4])
+	assert.Equal(t, JustInterval{numerator: 4, denominator: 3}, intervals[5])
+	assert.Equal(t, JustInterval{numerator: 7, denominator: 5}, intervals[6])
+	assert.Equal(t, JustInterval{numerator: 3, denominator: 2}, intervals[7])
+	assert.Equal(t, JustInterval{numerator: 8, denominator: 5}, intervals[8])
+	assert.Equal(t, JustInterval{numerator: 5, denominator: 3}, intervals[9])
+	assert.Equal(t, JustInterval{numerator: 7, denominator: 4}, intervals[10])
+	assert.Equal(t, JustInterval{numerator: 13, denominator: 7}, intervals[11])
+	assert.Equal(t, JustInterval{numerator: 2, denominator: 1}, intervals[12])
+}
+
+func Test_buildAFiveLimitJustChromaticScaleWithLesserMinorSeventhBasedOnPureRatios(t *testing.T) {
+	// Given
+	// Mike read the page at https://en.wikipedia.org/wiki/Five-limit_tuning and therefore
+	filterOutLesserMajorSecondAndGreaterMinorSeventh := func(interval JustInterval) bool {
+		if interval.IsLesserMajorSecond() || interval.IsGreaterMinorSeventh() {
+			return true
+		}
+		return false
+	}
+
+	// When
+	scale := NewJustIntonationChromaticScaleWithLimitAndFilter(5, filterOutLesserMajorSecondAndGreaterMinorSeventh)
 	intervals := scale.Intervals()
 
 	// Then
 	assert.Equal(t, "5-limit Just Intonation", scale.System())
-	assert.Equal(t, "5-limit just intonation pure ratios derived from third- and fifth-partial ratios.", scale.Description())
+	assert.Equal(t, "Just Intonation chromatic scale based on 5-limit pure ratios.", scale.Description())
 
 	assert.Equal(t, 13, len(intervals))
 	assert.Equal(t, JustInterval{numerator: 1, denominator: 1}, intervals[0])
@@ -116,17 +150,23 @@ func Test_shouldReturnJustChromaticScaleWithLesserMinorSeventhBasedOnPureRatios(
 	assert.Equal(t, JustInterval{numerator: 2, denominator: 1}, intervals[12])
 }
 
-func Test_shouldReturnJustChromaticScaleWithLesserMajorSecondBasedOnPureRatios(t *testing.T) {
+func Test_buildAFiveLimitJustChromaticScaleWithLesserMajorSecondBasedOnPureRatios(t *testing.T) {
 	// Given
-	// Mike read the page at https://en.wikipedia.org/wiki/Five-limit_tuning
+	// Mike read the page at https://en.wikipedia.org/wiki/Five-limit_tuning and
+	filterOutGreaterMajorSecondAndLesserMinorSeventh := func(interval JustInterval) bool {
+		if interval.IsGreaterMajorSecond() || interval.IsLesserMinorSeventh() {
+			return true
+		}
+		return false
+	}
 
 	// When
-	scale := New5LimitJustIntonationChromaticScale(Symmetric2)
+	scale := NewJustIntonationChromaticScaleWithLimitAndFilter(5, filterOutGreaterMajorSecondAndLesserMinorSeventh)
 	intervals := scale.Intervals()
 
 	// Then
 	assert.Equal(t, "5-limit Just Intonation", scale.System())
-	assert.Equal(t, "5-limit just intonation pure ratios derived from third- and fifth-partial ratios.", scale.Description())
+	assert.Equal(t, "Just Intonation chromatic scale based on 5-limit pure ratios.", scale.Description())
 
 	assert.Equal(t, 13, len(intervals))
 	assert.Equal(t, JustInterval{numerator: 1, denominator: 1}, intervals[0])
@@ -162,62 +202,6 @@ func Test_shouldReturnBespokeJustScaleBasedOnProvidedIntervals(t *testing.T) {
 	assert.Equal(t, JustInterval{numerator: 3, denominator: 2}, intervals[2])
 	assert.Equal(t, JustInterval{numerator: 16, denominator: 9}, intervals[3])
 	assert.Equal(t, JustInterval{numerator: 2, denominator: 1}, intervals[4])
-}
-
-func Test_shouldReturn7LimitJustChromaticScaleBasedOnPureRatios(t *testing.T) {
-	// Given
-	// Mike read the page at https://en.wikipedia.org/wiki/Five-limit_tuning
-
-	// When
-	scale := New7LimitJustIntonationChromaticScale()
-	intervals := scale.Intervals()
-
-	// Then
-	assert.Equal(t, "7-limit Just Intonation", scale.System())
-	assert.Equal(t, "7-limit just intonation pure ratios derived from third-, fifth- and seventh-partial ratios.", scale.Description())
-
-	assert.Equal(t, 13, len(intervals))
-	assert.Equal(t, JustInterval{numerator: 1, denominator: 1}, intervals[0])
-	assert.Equal(t, JustInterval{numerator: 15, denominator: 14}, intervals[1])
-	assert.Equal(t, JustInterval{numerator: 8, denominator: 7}, intervals[2])
-	assert.Equal(t, JustInterval{numerator: 6, denominator: 5}, intervals[3])
-	assert.Equal(t, JustInterval{numerator: 5, denominator: 4}, intervals[4])
-	assert.Equal(t, JustInterval{numerator: 4, denominator: 3}, intervals[5])
-	assert.Equal(t, JustInterval{numerator: 7, denominator: 5}, intervals[6])
-	assert.Equal(t, JustInterval{numerator: 3, denominator: 2}, intervals[7])
-	assert.Equal(t, JustInterval{numerator: 8, denominator: 5}, intervals[8])
-	assert.Equal(t, JustInterval{numerator: 5, denominator: 3}, intervals[9])
-	assert.Equal(t, JustInterval{numerator: 7, denominator: 4}, intervals[10])
-	assert.Equal(t, JustInterval{numerator: 15, denominator: 8}, intervals[11])
-	assert.Equal(t, JustInterval{numerator: 2, denominator: 1}, intervals[12])
-}
-
-func Test_shouldReturn13LimitJustChromaticScaleBasedOnPureRatios(t *testing.T) {
-	// Given
-	// Mike read the page at https://en.wikipedia.org/wiki/Five-limit_tuning
-
-	// When
-	scale := New13LimitJustIntonationChromaticScale()
-	intervals := scale.Intervals()
-
-	// Then
-	assert.Equal(t, "13-limit Just Intonation", scale.System())
-	assert.Equal(t, "Just Intonation chromatic scale based on 13-limit pure ratios.", scale.Description())
-
-	assert.Equal(t, 13, len(intervals))
-	assert.Equal(t, JustInterval{numerator: 1, denominator: 1}, intervals[0])
-	assert.Equal(t, JustInterval{numerator: 13, denominator: 12}, intervals[1])
-	assert.Equal(t, JustInterval{numerator: 8, denominator: 7}, intervals[2])
-	assert.Equal(t, JustInterval{numerator: 6, denominator: 5}, intervals[3])
-	assert.Equal(t, JustInterval{numerator: 5, denominator: 4}, intervals[4])
-	assert.Equal(t, JustInterval{numerator: 4, denominator: 3}, intervals[5])
-	assert.Equal(t, JustInterval{numerator: 7, denominator: 5}, intervals[6])
-	assert.Equal(t, JustInterval{numerator: 3, denominator: 2}, intervals[7])
-	assert.Equal(t, JustInterval{numerator: 8, denominator: 5}, intervals[8])
-	assert.Equal(t, JustInterval{numerator: 5, denominator: 3}, intervals[9])
-	assert.Equal(t, JustInterval{numerator: 7, denominator: 4}, intervals[10])
-	assert.Equal(t, JustInterval{numerator: 13, denominator: 7}, intervals[11])
-	assert.Equal(t, JustInterval{numerator: 2, denominator: 1}, intervals[12])
 }
 
 func Test_ShouldReturnIntenseDiatonicScaleInLydianModeWithScaleDegrees(t *testing.T) {

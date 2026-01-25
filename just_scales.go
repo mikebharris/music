@@ -2,6 +2,7 @@ package music
 
 import (
 	"fmt"
+	"math"
 	"slices"
 )
 
@@ -9,18 +10,6 @@ type JustScale struct {
 	system      string
 	description string
 	algorithm   computeJustIntervalsFn
-}
-
-type Symmetry string
-
-const (
-	Asymmetric Symmetry = "asymmetric"
-	Symmetric1 Symmetry = "symmetric1"
-	Symmetric2 Symmetry = "symmetric2"
-)
-
-func (s Symmetry) String() string {
-	return string(s)
 }
 
 func NewPythagoreanScale() JustScale {
@@ -39,34 +28,42 @@ func New5LimitPythagoreanScale() JustScale {
 	}
 }
 
-func New5LimitJustIntonationChromaticScale(symmetry Symmetry) JustScale {
+func NewJustIntonationChromaticScaleWithLimit(limit int) JustScale {
+	return NewJustIntonationChromaticScaleWithLimitAndFilter(limit, func(interval JustInterval) bool {
+		return false
+	})
+}
+
+func NewJustIntonationChromaticScaleWithLimitAndFilter(limit int, filter func(interval JustInterval) bool) JustScale {
 	return JustScale{
-		system:      "5-limit Just Intonation",
-		description: "5-limit just intonation pure ratios derived from third- and fifth-partial ratios.",
+		system:      fmt.Sprintf("%d-limit Just Intonation", limit),
+		description: fmt.Sprintf("Just Intonation chromatic scale based on %d-limit pure ratios.", limit),
 		algorithm: func() []JustInterval {
-			return computeJustScale(buildMultiplierTablesFrom(multipliers(3), multipliers(5), multipliers(9)), fiveLimitScaleFilter(symmetry))
+			return computeJustScaleWithLimit(limit, filter)
 		},
 	}
 }
 
-func New7LimitJustIntonationChromaticScale() JustScale {
-	return JustScale{
-		system:      "7-limit Just Intonation",
-		description: "7-limit just intonation pure ratios derived from third-, fifth- and seventh-partial ratios.",
-		algorithm: func() []JustInterval {
-			return computeJustScale(buildMultiplierTablesFrom(multipliers(3), multipliers(5), multipliers(9), multipliers(7)), nullScaleFilter())
-		},
+func computeJustScaleWithLimit(limit int, filter func(interval JustInterval) bool) []JustInterval {
+	var primeMultipliers [][][]uint
+	for p := 2; p <= limit; p++ {
+		if isPrime(p) {
+			primeMultipliers = append(primeMultipliers, multipliers(uint(p)))
+		}
 	}
+	return computeJustScale(buildMultiplierTablesFrom(primeMultipliers...), filter)
 }
 
-func New13LimitJustIntonationChromaticScale() JustScale {
-	return JustScale{
-		system:      "13-limit Just Intonation",
-		description: "Just Intonation chromatic scale based on 13-limit pure ratios.",
-		algorithm: func() []JustInterval {
-			return computeJustScale(buildMultiplierTablesFrom(multipliers(3), multipliers(5), multipliers(9), multipliers(7), multipliers(11), multipliers(13)), nullScaleFilter())
-		},
+func isPrime(n int) bool {
+	if n <= 1 {
+		return false
 	}
+	for i := 2; i <= int(math.Sqrt(float64(n))); i++ {
+		if n%i == 0 {
+			return false
+		}
+	}
+	return true
 }
 
 func NewIntenseDiatonicScale(mode MusicalMode) JustScale {
@@ -74,7 +71,7 @@ func NewIntenseDiatonicScale(mode MusicalMode) JustScale {
 		system:      "Ptolemy Intense Diatonic",
 		description: fmt.Sprintf("Ptolemy's 5-limit intense diatonic scale in %s mode.", mode),
 		algorithm: func() []JustInterval {
-			return computePtolemeicIntenseDiatonicScale(mode)
+			return computePtolemyIntenseDiatonicScale(mode)
 		},
 	}
 }
@@ -112,7 +109,7 @@ func (s JustScale) Intervals() []JustInterval {
 
 type computeJustIntervalsFn func() []JustInterval
 
-func computePtolemeicIntenseDiatonicScale(mode MusicalMode) []JustInterval {
+func computePtolemyIntenseDiatonicScale(mode MusicalMode) []JustInterval {
 	greaterMajorSecond := GreaterMajorSecond()
 	lesserMajorSecond := LesserMajorSecond()
 	diatonicSemitone := DiatonicSemitone()
@@ -201,27 +198,6 @@ func computeJustScale(multipliers [][]uint, filter intervalFilterFunction) []Jus
 	}
 
 	return preferredIntervals
-}
-
-func fiveLimitScaleFilter(symmetry Symmetry) func(interval JustInterval) bool {
-	return func(interval JustInterval) bool {
-		if symmetry == Asymmetric && (interval.IsLesserMajorSecond() || interval.IsLesserMinorSeventh()) {
-			return true
-		}
-		if symmetry == Symmetric1 && (interval.IsLesserMajorSecond() || interval.IsGreaterMinorSeventh()) {
-			return true
-		}
-		if symmetry == Symmetric2 && (interval.IsGreaterMajorSecond() || interval.IsLesserMinorSeventh()) {
-			return true
-		}
-		return false
-	}
-}
-
-func nullScaleFilter() func(interval JustInterval) bool {
-	return func(interval JustInterval) bool {
-		return false
-	}
 }
 
 func buildMultiplierTablesFrom(multipliers ...[][]uint) [][]uint {

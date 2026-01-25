@@ -277,6 +277,9 @@ func SortIntervals(intervals []JustInterval) {
 type intervalFilterFunction func(ratio JustInterval) bool
 
 func multipliers(base uint) [][]uint {
+	if base == 3 { // this feels a little hacky because it's only needed for a 5-limit scale
+		return [][]uint{{9, 1}, {3, 1}, {1, 1}, {1, 3}, {1, 9}}
+	}
 	return [][]uint{{base, 1}, {1, 1}, {1, base}}
 }
 

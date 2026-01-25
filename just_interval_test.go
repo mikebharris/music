@@ -310,106 +310,6 @@ func TestInterval_isEqualTo(t *testing.T) {
 	}
 }
 
-func TestInterval_isGreaterMajorSecond(t *testing.T) {
-	type fields struct {
-		numerator   uint
-		denominator uint
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			i := JustInterval{
-				numerator:   tt.fields.numerator,
-				denominator: tt.fields.denominator,
-			}
-			if got := i.IsGreaterMajorSecond(); got != tt.want {
-				t.Errorf("isGreaterMajorSecond() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestInterval_isGreaterMinorSeventh(t *testing.T) {
-	type fields struct {
-		numerator   uint
-		denominator uint
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			i := JustInterval{
-				numerator:   tt.fields.numerator,
-				denominator: tt.fields.denominator,
-			}
-			if got := i.IsGreaterMinorSeventh(); got != tt.want {
-				t.Errorf("isGreaterMinorSeventh() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestInterval_isLesserMajorSecond(t *testing.T) {
-	type fields struct {
-		numerator   uint
-		denominator uint
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			i := JustInterval{
-				numerator:   tt.fields.numerator,
-				denominator: tt.fields.denominator,
-			}
-			if got := i.IsLesserMajorSecond(); got != tt.want {
-				t.Errorf("isLesserMajorSecond() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestInterval_isLesserMinorSeventh(t *testing.T) {
-	type fields struct {
-		numerator   uint
-		denominator uint
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			i := JustInterval{
-				numerator:   tt.fields.numerator,
-				denominator: tt.fields.denominator,
-			}
-			if got := i.IsLesserMinorSeventh(); got != tt.want {
-				t.Errorf("isLesserMinorSeventh() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestInterval_isOctave(t *testing.T) {
 	type fields struct {
 		numerator   uint
@@ -530,56 +430,6 @@ func TestInterval_isPerfectFifth(t *testing.T) {
 	}
 }
 
-func TestInterval_isPerfectFourth(t *testing.T) {
-	type fields struct {
-		numerator   uint
-		denominator uint
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			i := JustInterval{
-				numerator:   tt.fields.numerator,
-				denominator: tt.fields.denominator,
-			}
-			if got := i.IsPerfectFourth(); got != tt.want {
-				t.Errorf("isPerfectFourth() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestInterval_isUnison(t *testing.T) {
-	type fields struct {
-		numerator   uint
-		denominator uint
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   bool
-	}{
-		{},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			i := JustInterval{
-				numerator:   tt.fields.numerator,
-				denominator: tt.fields.denominator,
-			}
-			if got := i.IsUnison(); got != tt.want {
-				t.Errorf("isUnison() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestInterval_lessThan(t *testing.T) {
 	type fields struct {
 		numerator   uint
@@ -645,31 +495,6 @@ func TestInterval_lessThan(t *testing.T) {
 			}
 			if got := i.LessThan(tt.args.other); got != tt.want {
 				t.Errorf("lessThan() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestInterval_name(t *testing.T) {
-	type fields struct {
-		numerator   uint
-		denominator uint
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			i := JustInterval{
-				numerator:   tt.fields.numerator,
-				denominator: tt.fields.denominator,
-			}
-			if got := i.Name(); got != tt.want {
-				t.Errorf("name() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -1135,6 +960,13 @@ func Test_multipliers(t *testing.T) {
 				base: 5,
 			},
 			want: [][]uint{{5, 1}, {1, 1}, {1, 5}},
+		},
+		{
+			name: "3 is a special case and generates more multipliers in order for there to be enough notes in the scale",
+			args: args{
+				base: 3,
+			},
+			want: [][]uint{{9, 1}, {3, 1}, {1, 1}, {1, 3}, {1, 9}},
 		},
 	}
 	for _, tt := range tests {
