@@ -37,7 +37,7 @@ func Test_newFretboardFromJustScale(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newFretboardFromJustScale(tt.args.length, tt.args.octaves, tt.args.scale); !reflect.DeepEqual(got, tt.want) {
+			if got := NewFretboardFromJustScale(tt.args.length, tt.args.octaves, tt.args.scale); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newFretboardFromJustScale() = %v, want %v", got, tt.want)
 			}
 		})
@@ -106,7 +106,7 @@ func Test_newFretboardFromTemperedScale(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newFretboardFromTemperedScale(tt.args.length, tt.args.octaves, tt.args.scale); !reflect.DeepEqual(got, tt.want) {
+			if got := NewFretboardFromTemperedScale(tt.args.length, tt.args.octaves, tt.args.scale); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newFretboardFromTemperedScale() = %v, want %v", got, tt.want)
 			}
 		})

@@ -19,7 +19,7 @@ type Fretboard struct {
 	Frets       []Fret  `json:"frets"`
 }
 
-func newFretboardFromJustScale(length float64, octaves int, scale JustScale) Fretboard {
+func NewFretboardFromJustScale(length float64, octaves int, scale JustScale) Fretboard {
 	fretboard := Fretboard{
 		System:      scale.System(),
 		Description: fmt.Sprintf("Fret positions based on %s", scale.Description()),
@@ -29,7 +29,7 @@ func newFretboardFromJustScale(length float64, octaves int, scale JustScale) Fre
 	return fretboard
 }
 
-func newFretboardFromTemperedScale(length float64, octaves int, scale TemperedScale) Fretboard {
+func NewFretboardFromTemperedScale(length float64, octaves int, scale TemperedScale) Fretboard {
 	fretboard := Fretboard{
 		System:      scale.System(),
 		Description: fmt.Sprintf("Fret positions based on %s", scale.Description()),
