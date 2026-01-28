@@ -388,3 +388,35 @@ func Test_ShouldReturnSazScaleWithExpectedScaleDegrees(t *testing.T) {
 	assert.Equal(t, JustInterval{numerator: 64, denominator: 33}, intervals[16])
 	assert.Equal(t, JustInterval{numerator: 2, denominator: 1}, intervals[17])
 }
+
+func Test_isPrime(t *testing.T) {
+	type args struct {
+		n int
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "should return false for n less than or equal to 1",
+			args: args{n: 1},
+			want: false,
+		},
+		{
+			name: "should return true for a prime number",
+			args: args{n: 13},
+			want: true,
+		},
+		{
+			name: "should return false for a non-prime number",
+			args: args{n: 15},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, isPrime(tt.args.n), "isPrime(%v)", tt.args.n)
+		})
+	}
+}

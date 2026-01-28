@@ -80,11 +80,8 @@ func (i JustInterval) IsOctave() bool {
 }
 
 func (i JustInterval) Simplify() JustInterval {
-	if i.denominator == 0 {
-		return i
-	}
-	if i.numerator == 0 {
-		return JustInterval{numerator: 0, denominator: 1}
+	if i.denominator == 0 || i.numerator == 0 {
+		return JustInterval{numerator: 1, denominator: 1}
 	}
 	gcd := func(a, b uint) uint {
 		for b != 0 {
@@ -140,6 +137,9 @@ func (i JustInterval) ToFloat() float64 {
 }
 
 func (i JustInterval) ToTemperedInterval() TemperedInterval {
+	if i.denominator == 0 {
+		return TemperedInterval(0)
+	}
 	return TemperedInterval(float64(i.numerator) / float64(i.denominator))
 }
 

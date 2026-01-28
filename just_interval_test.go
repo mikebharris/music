@@ -3,6 +3,8 @@ package music
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestInterval_String(t *testing.T) {
@@ -1031,6 +1033,302 @@ func Test_sortIntervals(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			SortIntervals(tt.args.intervals)
+		})
+	}
+}
+
+func TestPerfectFourth(t *testing.T) {
+	tests := []struct {
+		name string
+		want JustInterval
+	}{
+		{
+			name: "Returns a perfect fourth interval",
+			want: JustInterval{
+				numerator:   4,
+				denominator: 3,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, PerfectFourth(), "PerfectFourth()")
+		})
+	}
+}
+
+func TestDieses(t *testing.T) {
+	tests := []struct {
+		name string
+		want JustInterval
+	}{
+		{
+			name: "Returns a dieses interval",
+			want: JustInterval{
+				numerator:   128,
+				denominator: 125,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, Dieses(), "Dieses()")
+		})
+	}
+}
+
+func TestJustChromaticSemitone(t *testing.T) {
+	tests := []struct {
+		name string
+		want JustInterval
+	}{
+		{
+			name: "Returns a just chromatic semitone interval",
+			want: JustInterval{
+				numerator:   25,
+				denominator: 24,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, JustChromaticSemitone(), "JustChromaticSemitone()")
+		})
+	}
+}
+
+func TestJustInterval_ToTemperedInterval(t *testing.T) {
+	type fields struct {
+		numerator   uint
+		denominator uint
+		name        string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   TemperedInterval
+	}{
+		{
+			name: "Convert a perfect fifth to a tempered interval",
+			fields: fields{
+				numerator:   3,
+				denominator: 2,
+			},
+			want: TemperedInterval(1.5),
+		},
+		{
+			name: "Any interval with zero on the denominator converts to a tempered interval of zero",
+			fields: fields{
+				numerator:   3,
+				denominator: 0,
+			},
+			want: TemperedInterval(0),
+		},
+		{
+			name: "Any interval with zero on the numerator converts to a tempered interval of zero",
+			fields: fields{
+				numerator:   0,
+				denominator: 2,
+			},
+			want: TemperedInterval(0),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			i := JustInterval{
+				numerator:   tt.fields.numerator,
+				denominator: tt.fields.denominator,
+				name:        tt.fields.name,
+			}
+			assert.Equalf(t, tt.want, i.ToTemperedInterval(), "ToTemperedInterval()")
+		})
+	}
+}
+
+func TestJustInterval_Subtract(t *testing.T) {
+	type fields struct {
+		numerator   uint
+		denominator uint
+		name        string
+	}
+	type args struct {
+		other JustInterval
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   JustInterval
+	}{
+		{
+			name: "Subtract a perfect fourth from a perfect fifth to get a major second",
+			fields: fields{
+				numerator:   3,
+				denominator: 2,
+			},
+			args: args{
+				other: JustInterval{
+					numerator:   4,
+					denominator: 3,
+				},
+			},
+			want: JustInterval{
+				numerator:   9,
+				denominator: 8,
+			},
+		},
+		{
+			name: "Subtract a major fifth from a perfect second to get a perfect fourth",
+			fields: fields{
+				numerator:   9,
+				denominator: 8,
+			},
+			args: args{
+				other: JustInterval{
+					numerator:   3,
+					denominator: 2,
+				},
+			},
+			want: JustInterval{
+				numerator:   4,
+				denominator: 3,
+			},
+		},
+		{
+			name: "Subtracting an interval from itself results in a unison",
+			fields: fields{
+				numerator:   5,
+				denominator: 4,
+			},
+			args: args{
+				other: JustInterval{
+					numerator:   5,
+					denominator: 4,
+				},
+			},
+			want: JustInterval{
+				numerator:   1,
+				denominator: 1,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			i := JustInterval{
+				numerator:   tt.fields.numerator,
+				denominator: tt.fields.denominator,
+				name:        tt.fields.name,
+			}
+			assert.Equalf(t, tt.want, i.Subtract(tt.args.other), "Subtract(%v)", tt.args.other)
+		})
+	}
+}
+
+func TestJustInterval_Simplify(t *testing.T) {
+	type fields struct {
+		numerator   uint
+		denominator uint
+		name        string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   JustInterval
+	}{
+		{
+			name: "Simplify 10:8 to 5:4",
+			fields: fields{
+				numerator:   10,
+				denominator: 8,
+			},
+			want: JustInterval{
+				numerator:   5,
+				denominator: 4,
+			},
+		},
+		{
+			name: "Simplify 100:80 to 5:4",
+			fields: fields{
+				numerator:   100,
+				denominator: 80,
+			},
+			want: JustInterval{
+				numerator:   5,
+				denominator: 4,
+			},
+		},
+		{
+			name: "Simplifying an interval with a zero in the denominator returns a unison",
+			fields: fields{
+				numerator:   5,
+				denominator: 0,
+			},
+			want: JustInterval{
+				numerator:   1,
+				denominator: 1,
+			},
+		},
+		{
+			name: "Simplifying an interval with a zero in the numerator returns a unison",
+			fields: fields{
+				numerator:   0,
+				denominator: 5,
+			},
+			want: JustInterval{
+				numerator:   1,
+				denominator: 1,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			i := JustInterval{
+				numerator:   tt.fields.numerator,
+				denominator: tt.fields.denominator,
+				name:        tt.fields.name,
+			}
+			assert.Equalf(t, tt.want, i.Simplify(), "Simplify()")
+		})
+	}
+}
+
+func TestJustInterval_Name(t *testing.T) {
+	type fields struct {
+		numerator   uint
+		denominator uint
+		name        string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{
+			name: "Get the name of an interval",
+			fields: fields{
+				numerator:   3,
+				denominator: 2,
+			},
+			want: "Perfect Fifth",
+		},
+		{
+			name: "An unnamed interval returns an empty string",
+			fields: fields{
+				numerator:   1381,
+				denominator: 2112,
+				name:        "",
+			},
+			want: "",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			i := JustInterval{
+				numerator:   tt.fields.numerator,
+				denominator: tt.fields.denominator,
+				name:        tt.fields.name,
+			}
+			assert.Equalf(t, tt.want, i.Name(), "Name()")
 		})
 	}
 }

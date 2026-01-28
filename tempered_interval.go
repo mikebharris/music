@@ -20,5 +20,5 @@ func (i TemperedInterval) ToFloat() float64 {
 }
 
 func (i TemperedInterval) String() string {
-	return fmt.Sprintf("%f", i.ToFloat())
+	return fmt.Sprintf("%.2f", i.ToFloat())
 }
