@@ -194,6 +194,9 @@ func computeJustScale(multipliers [][]uint, filter intervalFilterFunction) []Jus
 				continue
 			}
 		}
+		if chosenInterval == (JustInterval{}) {
+			continue
+		}
 		preferredIntervals = append(preferredIntervals, chosenInterval)
 	}
 
