@@ -1,17 +1,15 @@
-package instruments
+package music
 
 import (
 	"reflect"
 	"testing"
-
-	"github.com/mikebharris/music"
 )
 
 func Test_newFretboardFromJustScale(t *testing.T) {
 	type args struct {
 		length  float64
 		octaves int
-		scale   music.JustScale
+		scale   JustScale
 	}
 	tests := []struct {
 		name string
@@ -23,7 +21,7 @@ func Test_newFretboardFromJustScale(t *testing.T) {
 			args: args{
 				length:  650.0,
 				octaves: 2,
-				scale:   music.NewJustIntonationChromaticScaleWithLimit(2),
+				scale:   NewJustIntonationChromaticScaleWithLimit(2),
 			},
 			want: Fretboard{
 				System:      "2-limit Just Intonation",
@@ -50,7 +48,7 @@ func Test_newFretboardFromTemperedScale(t *testing.T) {
 	type args struct {
 		length  float64
 		octaves int
-		scale   music.TemperedScale
+		scale   TemperedScale
 	}
 	tests := []struct {
 		name string
@@ -62,7 +60,7 @@ func Test_newFretboardFromTemperedScale(t *testing.T) {
 			args: args{
 				length:  650.0,
 				octaves: 1,
-				scale:   music.NewEqualTemperamentScale(12),
+				scale:   NewEqualTemperamentScale(12),
 			},
 			want: Fretboard{
 				System:      "Equal Temperament",
@@ -90,7 +88,7 @@ func Test_newFretboardFromTemperedScale(t *testing.T) {
 			args: args{
 				length:  650.0,
 				octaves: 2,
-				scale:   music.NewEqualTemperamentScale(2),
+				scale:   NewEqualTemperamentScale(2),
 			},
 			want: Fretboard{
 				System:      "Equal Temperament",
