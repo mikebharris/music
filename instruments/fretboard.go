@@ -1,8 +1,10 @@
-package music
+package instruments
 
 import (
 	"fmt"
 	"math"
+
+	"github.com/mikebharris/music/music"
 )
 
 type Fret struct {
@@ -19,7 +21,7 @@ type Fretboard struct {
 	Frets       []Fret  `json:"frets"`
 }
 
-func NewFretboardFromJustScale(length float64, octaves int, scale JustScale) Fretboard {
+func NewFretboardFromJustScale(length float64, octaves int, scale music.JustScale) Fretboard {
 	fretboard := Fretboard{
 		System:      scale.System(),
 		Description: fmt.Sprintf("Fret positions based on %s", scale.Description()),
@@ -29,7 +31,7 @@ func NewFretboardFromJustScale(length float64, octaves int, scale JustScale) Fre
 	return fretboard
 }
 
-func NewFretboardFromTemperedScale(length float64, octaves int, scale TemperedScale) Fretboard {
+func NewFretboardFromTemperedScale(length float64, octaves int, scale music.TemperedScale) Fretboard {
 	fretboard := Fretboard{
 		System:      scale.System(),
 		Description: fmt.Sprintf("Fret positions based on %s", scale.Description()),
@@ -39,7 +41,7 @@ func NewFretboardFromTemperedScale(length float64, octaves int, scale TemperedSc
 	return fretboard
 }
 
-func (f *Fretboard) makeTemperedFrets(intervals []TemperedInterval, octaves int) {
+func (f *Fretboard) makeTemperedFrets(intervals []music.TemperedInterval, octaves int) {
 	for octave := 0; octave < octaves; octave++ {
 		for i, interval := range intervals {
 			if octave > 0 && i == 0 {
@@ -53,12 +55,12 @@ func (f *Fretboard) makeTemperedFrets(intervals []TemperedInterval, octaves int)
 	}
 }
 
-func (f *Fretboard) makeJustFrets(intervals []JustInterval, octaves int) {
-	var previousInterval = Unison()
+func (f *Fretboard) makeJustFrets(intervals []music.JustInterval, octaves int) {
+	var previousInterval = music.Unison()
 	for octave := 0; octave < octaves; octave++ {
 		for _, interval := range intervals {
-			if octave > 0 && interval == Unison() {
-				previousInterval = Unison()
+			if octave > 0 && interval == music.Unison() {
+				previousInterval = music.Unison()
 				continue // skip unison at octave 0
 			}
 			f.Frets = append(f.Frets, Fret{
