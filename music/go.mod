@@ -1,4 +1,4 @@
-module github.com/mikebharris/music/theory
+module github.com/mikebharris/music/music
 
 go 1.25.6
 

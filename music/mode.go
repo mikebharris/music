@@ -1,4 +1,4 @@
-package theory
+package music
 
 const (
 	LydianMode     MusicalMode = "Lydian"
