@@ -13,7 +13,7 @@ func Test_ShouldGenerateScalaFileForPythagorean3LimitScale(t *testing.T) {
 	scale := music.NewPythagoreanScale()
 
 	// When
-	scalaFile := newScalaScaleFileFromJustScale("pythagorean-3-limit.scl", scale)
+	scalaFile := NewScalaScaleFileFromScale("pythagorean-3-limit.scl", scale)
 
 	// Then
 	contents := strings.Split(scalaFile, "\n")
