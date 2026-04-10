@@ -420,3 +420,14 @@ func Test_isPrime(t *testing.T) {
 		})
 	}
 }
+
+func Test_convertJustScaleToRelativeFrequencies(t *testing.T) {
+	// Given
+	scale := NewSazScale()
+
+	// When
+	frequencies := scale.ToFrequenciesForTonicOf(256.00, 2)
+
+	// Then
+	assert.Equal(t, []float64{256, 271, 279, 288, 304, 314, 324, 341, 361, 372, 384, 406, 418, 432, 455, 481, 496, 512, 542, 558, 576, 609, 628, 648, 682, 722, 744, 768, 813, 837, 864, 910, 963, 992, 1024}, frequencies)
+}

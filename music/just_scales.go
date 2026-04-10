@@ -107,6 +107,19 @@ func (s JustScale) Intervals() []JustInterval {
 	return s.algorithm()
 }
 
+func (s JustScale) ToFrequenciesForTonicOf(tonic uint, octaves uint) []float64 {
+	var frequencies []float64
+	for octave := uint(1); octave <= octaves; octave++ {
+		for _, interval := range s.Intervals() {
+			if interval.IsUnison() && octave > 1 {
+				continue
+			}
+			frequencies = append(frequencies, float64(tonic*interval.Numerator()*octave/interval.Denominator()))
+		}
+	}
+	return frequencies
+}
+
 type computeJustIntervalsFn func() []JustInterval
 
 func computePtolemyIntenseDiatonicScale(mode MusicalMode) []JustInterval {

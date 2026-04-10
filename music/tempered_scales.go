@@ -52,6 +52,20 @@ func (s TemperedScale) Intervals() []TemperedInterval {
 	return s.algorithm()
 }
 
+func (s TemperedScale) ToFrequenciesForTonicOf(tonic float64, octaves uint) []float64 {
+	var frequencies []float64
+	for octave := uint(1); octave <= octaves; octave++ {
+		for _, interval := range s.Intervals() {
+			if interval.IsUnison() && octave > 1 {
+				continue
+			}
+			frequencies = append(frequencies, math.Round(float64(octave)*tonic*interval.Value()*100)/100)
+		}
+	}
+	return frequencies
+
+}
+
 type computeTemperedIntervalsFn func() []TemperedInterval
 
 func computeQuarterCommaMeantoneScale() []TemperedInterval {

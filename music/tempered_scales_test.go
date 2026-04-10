@@ -145,3 +145,14 @@ func Test_ShouldReturnScaleFor19ToneEqualTemperament(t *testing.T) {
 	assert.Equal(t, 1136.84, intervals[18].ToCents())
 	assert.Equal(t, 1200.00, intervals[19].ToCents())
 }
+
+func Test_convertTemperedScaleToRelativeFrequencies(t *testing.T) {
+	// Given
+	scale := NewEqualTemperamentScale(12)
+
+	// When
+	frequencies := scale.ToFrequenciesForTonicOf(256.00, 2)
+
+	// Then
+	assert.Equal(t, []float64{256, 271.22, 287.35, 304.44, 322.54, 341.72, 362.04, 383.57, 406.37, 430.54, 456.14, 483.26, 512, 542.45, 574.7, 608.87, 645.08, 683.44, 724.08, 767.13, 812.75, 861.08, 912.28, 966.53, 1024}, frequencies)
+}

@@ -22,3 +22,7 @@ func (i TemperedInterval) ToFloat() float64 {
 func (i TemperedInterval) String() string {
 	return fmt.Sprintf("%.2f", i.ToFloat())
 }
+
+func (i TemperedInterval) IsUnison() bool {
+	return i.Value() == 1.0
+}
