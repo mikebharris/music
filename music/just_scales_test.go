@@ -429,5 +429,5 @@ func Test_convertJustScaleToRelativeFrequencies(t *testing.T) {
 	frequencies := scale.ToFrequenciesForTonicOf(256.00, 2)
 
 	// Then
-	assert.Equal(t, []float64{256, 271, 279, 288, 304, 314, 324, 341, 361, 372, 384, 406, 418, 432, 455, 481, 496, 512, 542, 558, 576, 609, 628, 648, 682, 722, 744, 768, 813, 837, 864, 910, 963, 992, 1024}, frequencies)
+	assert.Equal(t, []float64{256, 271, 279, 288, 305, 314, 324, 341, 361, 372, 384, 407, 419, 432, 455, 482, 496, 512, 542, 559, 576, 610, 628, 648, 683, 723, 745, 768, 813, 838, 864, 910, 964, 993, 1024}, frequencies)
 }

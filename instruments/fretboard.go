@@ -1,6 +1,7 @@
 package instruments
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 
@@ -19,6 +20,12 @@ type Fretboard struct {
 	Description string  `json:"description,omitempty"`
 	ScaleLength float64 `json:"scaleLength"`
 	Frets       []Fret  `json:"frets"`
+}
+
+// String returns the Fretboard as a JSON string.
+func (f Fretboard) String() string {
+	b, _ := json.MarshalIndent(f, "", "  ")
+	return string(b)
 }
 
 func NewFretboardFromJustScale(length float64, octaves int, scale music.JustScale) Fretboard {
@@ -45,7 +52,7 @@ func (f *Fretboard) makeTemperedFrets(intervals []music.TemperedInterval, octave
 	for octave := 0; octave < octaves; octave++ {
 		for i, interval := range intervals {
 			if octave > 0 && i == 0 {
-				continue // skip unison at octave 0
+				continue // skip unison on subsequent octaves
 			}
 			f.Frets = append(f.Frets, Fret{
 				Label:    fmt.Sprintf("%.2f cents", interval.ToCents()+float64(octave)*1200),
@@ -61,11 +68,13 @@ func (f *Fretboard) makeJustFrets(intervals []music.JustInterval, octaves int) {
 		for _, interval := range intervals {
 			if octave > 0 && interval == music.Unison() {
 				previousInterval = music.Unison()
-				continue // skip unison at octave 0
+				continue // skip unison on subsequent octaves
 			}
+			// Fret position: distance from nut = ScaleLength * (1 - denom / (numer * 2^octave))
+			position := f.ScaleLength * (1 - float64(interval.Denominator())/(float64(interval.Numerator())*math.Pow(2, float64(octave))))
 			f.Frets = append(f.Frets, Fret{
 				Label:    interval.String(),
-				Position: math.Round((f.ScaleLength-(f.ScaleLength/float64(interval.Numerator()))*float64(interval.Denominator())/math.Pow(2, float64(octave)))*100) / 100,
+				Position: math.Round(position*100) / 100,
 				Comment:  interval.Name(),
 				Interval: interval.Subtract(previousInterval).String(),
 			})

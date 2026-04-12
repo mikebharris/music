@@ -114,7 +114,8 @@ func (s JustScale) ToFrequenciesForTonicOf(tonic uint, octaves uint) []float64 {
 			if interval.IsUnison() && octave > 1 {
 				continue
 			}
-			frequencies = append(frequencies, float64(tonic*interval.Numerator()*octave/interval.Denominator()))
+			f := float64(tonic) * float64(octave) * float64(interval.Numerator()) / float64(interval.Denominator())
+			frequencies = append(frequencies, math.Round(f))
 		}
 	}
 	return frequencies
@@ -122,25 +123,23 @@ func (s JustScale) ToFrequenciesForTonicOf(tonic uint, octaves uint) []float64 {
 
 type computeJustIntervalsFn func() []JustInterval
 
+// ptolemyIntenseDiatonicSteps maps each diatonic mode to its sequence of successive
+// step intervals. Defined at package level to avoid re-allocation on every call.
+var ptolemyIntenseDiatonicSteps = map[MusicalMode][]JustInterval{
+	LydianMode:     {GreaterMajorSecond(), LesserMajorSecond(), GreaterMajorSecond(), DiatonicSemitone(), LesserMajorSecond(), GreaterMajorSecond(), DiatonicSemitone()},
+	IonianMode:     {GreaterMajorSecond(), LesserMajorSecond(), DiatonicSemitone(), GreaterMajorSecond(), LesserMajorSecond(), GreaterMajorSecond(), DiatonicSemitone()},
+	MixolydianMode: {GreaterMajorSecond(), LesserMajorSecond(), DiatonicSemitone(), GreaterMajorSecond(), LesserMajorSecond(), DiatonicSemitone(), GreaterMajorSecond()},
+	DorianMode:     {GreaterMajorSecond(), DiatonicSemitone(), LesserMajorSecond(), GreaterMajorSecond(), LesserMajorSecond(), DiatonicSemitone(), GreaterMajorSecond()},
+	AeolianMode:    {GreaterMajorSecond(), DiatonicSemitone(), LesserMajorSecond(), GreaterMajorSecond(), DiatonicSemitone(), GreaterMajorSecond(), LesserMajorSecond()},
+	PhrygianMode:   {DiatonicSemitone(), GreaterMajorSecond(), LesserMajorSecond(), GreaterMajorSecond(), DiatonicSemitone(), GreaterMajorSecond(), LesserMajorSecond()},
+	LocrianMode:    {DiatonicSemitone(), GreaterMajorSecond(), LesserMajorSecond(), DiatonicSemitone(), GreaterMajorSecond(), LesserMajorSecond(), GreaterMajorSecond()},
+}
+
 func computePtolemyIntenseDiatonicScale(mode MusicalMode) []JustInterval {
-	greaterMajorSecond := GreaterMajorSecond()
-	lesserMajorSecond := LesserMajorSecond()
-	diatonicSemitone := DiatonicSemitone()
-
-	var intervalMap = map[MusicalMode][]JustInterval{
-		LydianMode:     {greaterMajorSecond, lesserMajorSecond, greaterMajorSecond, diatonicSemitone, lesserMajorSecond, greaterMajorSecond, diatonicSemitone},
-		IonianMode:     {greaterMajorSecond, lesserMajorSecond, diatonicSemitone, greaterMajorSecond, lesserMajorSecond, greaterMajorSecond, diatonicSemitone},
-		MixolydianMode: {greaterMajorSecond, lesserMajorSecond, diatonicSemitone, greaterMajorSecond, lesserMajorSecond, diatonicSemitone, greaterMajorSecond},
-		DorianMode:     {greaterMajorSecond, diatonicSemitone, lesserMajorSecond, greaterMajorSecond, lesserMajorSecond, diatonicSemitone, greaterMajorSecond},
-		AeolianMode:    {greaterMajorSecond, diatonicSemitone, lesserMajorSecond, greaterMajorSecond, diatonicSemitone, greaterMajorSecond, lesserMajorSecond},
-		PhrygianMode:   {diatonicSemitone, greaterMajorSecond, lesserMajorSecond, greaterMajorSecond, diatonicSemitone, greaterMajorSecond, lesserMajorSecond},
-		LocrianMode:    {diatonicSemitone, greaterMajorSecond, lesserMajorSecond, diatonicSemitone, greaterMajorSecond, lesserMajorSecond, greaterMajorSecond},
-	}
-
 	var interval = Unison()
 	var intervals = []JustInterval{interval}
 
-	for _, v := range intervalMap[mode] {
+	for _, v := range ptolemyIntenseDiatonicSteps[mode] {
 		interval = JustInterval{numerator: interval.numerator * v.numerator, denominator: interval.denominator * v.denominator}.Simplify()
 		intervals = append(intervals, interval)
 	}
@@ -152,11 +151,7 @@ func computePythagoreanIntervals() []JustInterval {
 	var fifthsFromTonicToCompute = 6
 	var intervals []JustInterval
 	for i := -fifthsFromTonicToCompute; i <= fifthsFromTonicToCompute; i++ {
-		if i < 0 {
-			intervals = append(intervals, PerfectFifth().ToPowerOf(i).Reciprocal().OctaveReduce())
-		} else {
-			intervals = append(intervals, PerfectFifth().ToPowerOf(i).OctaveReduce())
-		}
+		intervals = append(intervals, PerfectFifth().ToPowerOf(i).OctaveReduce())
 	}
 
 	intervals = append(intervals, Octave())
@@ -199,12 +194,12 @@ func computeJustScale(multipliers [][]uint, filter intervalFilterFunction) []Jus
 			}
 		}
 
-		//   chosen interval is the simplest integer ratio
+		// chosen interval is the one with the lowest Benedetti height (numerator * denominator),
+		// which reliably selects the simplest integer ratio.
 		var chosenInterval JustInterval
 		for i, interval := range intervalsInNoteRange {
-			if i == 0 || (interval.numerator < chosenInterval.numerator && interval.denominator < chosenInterval.denominator) {
+			if i == 0 || interval.BenedettiHeight() < chosenInterval.BenedettiHeight() {
 				chosenInterval = interval
-				continue
 			}
 		}
 		if chosenInterval == (JustInterval{}) {

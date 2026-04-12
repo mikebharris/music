@@ -95,6 +95,9 @@ func (i JustInterval) Simplify() JustInterval {
 }
 
 func (i JustInterval) OctaveReduce() JustInterval {
+	if i.numerator == 0 || i.denominator == 0 {
+		return Unison()
+	}
 	for i.ToFloat() >= 2.0 || i.ToFloat() < 1.0 {
 		if i.ToFloat() < 1.0 {
 			i.numerator *= 2
@@ -137,19 +140,42 @@ func (i JustInterval) ToFloat() float64 {
 }
 
 func (i JustInterval) ToTemperedInterval() TemperedInterval {
-	if i.denominator == 0 {
+	if i.denominator == 0 || i.numerator == 0 {
 		return TemperedInterval(0)
 	}
 	return TemperedInterval(float64(i.numerator) / float64(i.denominator))
 }
 
 func (i JustInterval) ToPowerOf(p int) JustInterval {
-	return JustInterval{numerator: uint(math.Pow(float64(i.numerator), math.Abs(float64(p)))), denominator: uint(math.Pow(float64(i.denominator), math.Abs(float64(p))))}.Simplify()
+	if p < 0 {
+		return i.Reciprocal().ToPowerOf(-p)
+	}
+	if p == 0 {
+		return Unison()
+	}
+	return JustInterval{
+		numerator:   uint(math.Pow(float64(i.numerator), float64(p))),
+		denominator: uint(math.Pow(float64(i.denominator), float64(p))),
+	}.Simplify()
 }
 
 func (i JustInterval) Reciprocal() JustInterval {
 	interval := JustInterval{denominator: i.numerator, numerator: i.denominator}
 	return interval
+}
+
+// https://en.xen.wiki/w/Benedetti_height
+func (i JustInterval) BenedettiHeight() uint {
+	return i.numerator * i.denominator
+}
+
+// https://en.xen.wiki/w/Tenney_norm
+func (i JustInterval) TenneyNorm() float64 {
+	return math.Log2(float64(i.BenedettiHeight()))
+}
+
+func (i JustInterval) HarmonicDistance() float64 {
+	return i.TenneyNorm()
 }
 
 func PerfectFourth() JustInterval {
@@ -160,12 +186,13 @@ func Unison() JustInterval {
 }
 
 func AcuteUnison() JustInterval {
-	return JustInterval{numerator: 81, denominator: 80}
+	return SyntonicComma()
 }
 
 func SyntonicComma() JustInterval {
 	return JustInterval{numerator: 81, denominator: 80}
 }
+
 func Dieses() JustInterval {
 	return JustInterval{numerator: 128, denominator: 125}
 }
@@ -191,6 +218,19 @@ func PerfectFifth() JustInterval {
 }
 func Octave() JustInterval {
 	return JustInterval{numerator: 2, denominator: 1}
+}
+
+// Invert returns the octave complement of the interval (i.e. Octave / interval).
+func (i JustInterval) Invert() JustInterval {
+	return Octave().Subtract(i)
+}
+
+// DeviationFromEqualTemperament returns the deviation in cents from the nearest
+// 12-tone equal temperament pitch.
+func (i JustInterval) DeviationFromEqualTemperament() float64 {
+	cents := i.ToCents()
+	nearest := math.Round(cents/100) * 100
+	return cents - nearest
 }
 
 var intervalNames = []JustInterval{
@@ -276,11 +316,25 @@ func SortIntervals(intervals []JustInterval) {
 // intervalFilterFunction defines a function type for excluding certain ratios based on scale symmetry.
 type intervalFilterFunction func(ratio JustInterval) bool
 
+// multipliers generates ratio pairs {base^n, 1} and {1, base^n} for n=1..power,
+// plus the unison {1, 1}. For base 3 a power of 2 is used so the Pythagorean
+// chromatic scale has enough distinct pitches; all other bases use power 1.
 func multipliers(base uint) [][]uint {
-	if base == 3 { // this feels a little hacky because it's only needed for a 5-limit scale
-		return [][]uint{{9, 1}, {3, 1}, {1, 1}, {1, 3}, {1, 9}}
+	power := 1
+	if base == 3 {
+		power = 2
 	}
-	return [][]uint{{base, 1}, {1, 1}, {1, base}}
+	result := make([][]uint, 0, 2*power+1)
+	for n := power; n >= 1; n-- {
+		exp := uint(math.Pow(float64(base), float64(n)))
+		result = append(result, []uint{exp, 1})
+	}
+	result = append(result, []uint{1, 1})
+	for n := 1; n <= power; n++ {
+		exp := uint(math.Pow(float64(base), float64(n)))
+		result = append(result, []uint{1, exp})
+	}
+	return result
 }
 
 func justIntervalsFromMultipliers(multiplierList [][]uint, filter intervalFilterFunction) []JustInterval {

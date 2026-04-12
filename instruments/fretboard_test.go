@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/mikebharris/music/music"
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_newFretboardFromJustScale(t *testing.T) {
@@ -113,4 +114,25 @@ func Test_newFretboardFromTemperedScale(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestStringReturnsFretboardInJsonFormat(t *testing.T) {
+
+	// Given
+	f := Fretboard{
+		System:      "Equal Temperament",
+		Description: "Fret positions based on 12-tone equal temperament.",
+		ScaleLength: 650.0,
+		Frets: []Fret{
+			{Label: "0.00 cents", Position: 0},
+			{Label: "100.00 cents", Position: 36.48},
+		},
+	}
+
+	// When
+	returnedJson := f.String()
+
+	// Then
+	expectedJson := `{"system": "Equal Temperament", "description": "Fret positions based on 12-tone equal temperament.","scaleLength": 650, "frets": [ {"label": "0.00 cents", "position": 0}, {"label": "100.00 cents", "position": 36.48} ] }`
+	assert.JSONEq(t, expectedJson, returnedJson)
 }

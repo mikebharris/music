@@ -1332,3 +1332,122 @@ func TestJustInterval_Name(t *testing.T) {
 		})
 	}
 }
+
+func TestJustInterval_Invert(t *testing.T) {
+	tests := []struct {
+		name     string
+		interval JustInterval
+		want     JustInterval
+	}{
+		{
+			name:     "Invert of a major third is a minor sixth",
+			interval: JustInterval{numerator: 5, denominator: 4},
+			want:     JustInterval{numerator: 8, denominator: 5},
+		},
+		{
+			name:     "Invert of a perfect fifth is a perfect fourth",
+			interval: JustInterval{numerator: 3, denominator: 2},
+			want:     JustInterval{numerator: 4, denominator: 3},
+		},
+		{
+			name:     "Invert of a minor second (16/15) is a major seventh (15/8)",
+			interval: JustInterval{numerator: 16, denominator: 15},
+			want:     JustInterval{numerator: 15, denominator: 8},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.interval.Invert())
+		})
+	}
+}
+
+func TestJustInterval_DeviationFromEqualTemperament(t *testing.T) {
+	tests := []struct {
+		name     string
+		interval JustInterval
+		want     float64
+	}{
+		{
+			name:     "Perfect fifth (3:2) deviates by ~+1.955 cents from 700 cents",
+			interval: JustInterval{numerator: 3, denominator: 2},
+			want:     1.9550008653873953,
+		},
+		{
+			name:     "Major third (5:4) deviates by ~-13.686 cents from 400 cents",
+			interval: JustInterval{numerator: 5, denominator: 4},
+			want:     -13.686286135567685,
+		},
+		{
+			name:     "Unison (1:1) has zero deviation",
+			interval: JustInterval{numerator: 1, denominator: 1},
+			want:     0.0,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.InDelta(t, tt.want, tt.interval.DeviationFromEqualTemperament(), 1e-9)
+		})
+	}
+}
+
+func TestJustInterval_ToPowerOf_NegativeExponents(t *testing.T) {
+	tests := []struct {
+		name     string
+		interval JustInterval
+		power    int
+		want     JustInterval
+	}{
+		{
+			name:     "Fifth to the power of -1 is a fourth (after octave reducing the reciprocal)",
+			interval: JustInterval{numerator: 3, denominator: 2},
+			power:    -1,
+			want:     JustInterval{numerator: 2, denominator: 3},
+		},
+		{
+			name:     "Fifth to the power of 0 is unison",
+			interval: JustInterval{numerator: 3, denominator: 2},
+			power:    0,
+			want:     JustInterval{numerator: 1, denominator: 1},
+		},
+		{
+			name:     "Fifth to the power of -2 is a minor seventh (2/3)^2 = 4/9",
+			interval: JustInterval{numerator: 3, denominator: 2},
+			power:    -2,
+			want:     JustInterval{numerator: 4, denominator: 9},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.interval.ToPowerOf(tt.power))
+		})
+	}
+}
+
+func TestJustInterval_OctaveReduce_ZeroGuard(t *testing.T) {
+	tests := []struct {
+		name     string
+		interval JustInterval
+		want     JustInterval
+	}{
+		{
+			name:     "OctaveReduce with zero numerator returns unison",
+			interval: JustInterval{numerator: 0, denominator: 2},
+			want:     JustInterval{numerator: 1, denominator: 1},
+		},
+		{
+			name:     "OctaveReduce with zero denominator returns unison",
+			interval: JustInterval{numerator: 3, denominator: 0},
+			want:     JustInterval{numerator: 1, denominator: 1},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.interval.OctaveReduce())
+		})
+	}
+}
+
+func TestSyntonicComma_IsAliasForAcuteUnison(t *testing.T) {
+	assert.Equal(t, AcuteUnison(), SyntonicComma(), "SyntonicComma and AcuteUnison should return the same ratio (81/80)")
+}
