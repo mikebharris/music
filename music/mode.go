@@ -12,6 +12,16 @@ const (
 
 type MusicalMode string
 
+var modeBrightness = map[MusicalMode]int{
+	LydianMode:     7,
+	IonianMode:     6,
+	MixolydianMode: 5,
+	DorianMode:     4,
+	AeolianMode:    3,
+	PhrygianMode:   2,
+	LocrianMode:    1,
+}
+
 func (m MusicalMode) IsDiatonic() bool {
 	switch m {
 	case LydianMode, IonianMode, MixolydianMode, DorianMode, AeolianMode, PhrygianMode, LocrianMode:
@@ -20,6 +30,15 @@ func (m MusicalMode) IsDiatonic() bool {
 		return false
 	}
 }
+
+func (m MusicalMode) BrightnessOrder() int {
+	return modeBrightness[m]
+}
+
+func (m MusicalMode) IsBrighterThan(other MusicalMode) bool {
+	return m.BrightnessOrder() > other.BrightnessOrder()
+}
+
 func (m MusicalMode) String() string {
 	return string(m)
 }

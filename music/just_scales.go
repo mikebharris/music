@@ -95,6 +95,32 @@ func NewJustIntonationChromaticScaleWith(description string, intervals [][]uint)
 	}
 }
 
+// NewHarmonicSeriesScale returns a JustScale built from the first n partials of
+// the harmonic series, expressed as ratios relative to the fundamental (partial 1).
+// Each partial k gives the interval k/1, which is then octave-reduced to [1, 2).
+// The octave (2/1) is always included as the final degree.
+func NewHarmonicSeriesScale(partials uint) JustScale {
+	return JustScale{
+		system:      "Harmonic Series",
+		description: fmt.Sprintf("First %d partials of the harmonic series, octave-reduced to a single octave.", partials),
+		algorithm: func() []JustInterval {
+			seen := make(map[JustInterval]bool)
+			var intervals []JustInterval
+			for k := uint(1); k <= partials; k++ {
+				interval := JustInterval{numerator: k, denominator: 1}.OctaveReduce().Simplify()
+				if seen[interval] {
+					continue
+				}
+				seen[interval] = true
+				intervals = append(intervals, interval)
+			}
+			intervals = append(intervals, Octave())
+			SortIntervals(intervals)
+			return intervals
+		},
+	}
+}
+
 func (s JustScale) System() string {
 	return s.system
 }
@@ -109,12 +135,13 @@ func (s JustScale) Intervals() []JustInterval {
 
 func (s JustScale) ToFrequenciesForTonicOf(tonic uint, octaves uint) []float64 {
 	var frequencies []float64
-	for octave := uint(1); octave <= octaves; octave++ {
+	for octave := uint(0); octave < octaves; octave++ {
+		octaveMultiplier := math.Pow(2, float64(octave))
 		for _, interval := range s.Intervals() {
-			if interval.IsUnison() && octave > 1 {
+			if interval.IsUnison() && octave > 0 {
 				continue
 			}
-			f := float64(tonic) * float64(octave) * float64(interval.Numerator()) / float64(interval.Denominator())
+			f := float64(tonic) * octaveMultiplier * float64(interval.Numerator()) / float64(interval.Denominator())
 			frequencies = append(frequencies, math.Round(f))
 		}
 	}
@@ -169,8 +196,8 @@ func compute5LimitPythagoreanIntervals() []JustInterval {
 			continue
 		}
 
-		graveRatio := interval.Add(AcuteUnison())
-		acuteRatio := interval.Add(GraveUnison())
+		acuteRatio := interval.Add(SyntonicComma())
+		graveRatio := interval.Add(SyntonicComma().Reciprocal())
 
 		if graveRatio.denominator < acuteRatio.denominator {
 			intervals = append(intervals, graveRatio)

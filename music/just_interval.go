@@ -185,6 +185,14 @@ func Unison() JustInterval {
 	return JustInterval{numerator: 1, denominator: 1}
 }
 
+func GraveUnison() JustInterval {
+	return JustInterval{numerator: 80, denominator: 81}
+}
+
+func PythagoreanComma() JustInterval {
+	return JustInterval{numerator: 531441, denominator: 524288}
+}
+
 func AcuteUnison() JustInterval {
 	return SyntonicComma()
 }
@@ -197,13 +205,14 @@ func Dieses() JustInterval {
 	return JustInterval{numerator: 128, denominator: 125}
 }
 
+func Schisma() JustInterval {
+	return JustInterval{numerator: 32805, denominator: 32768}
+}
+
 func JustChromaticSemitone() JustInterval {
 	return JustInterval{numerator: 25, denominator: 24}
 }
 
-func GraveUnison() JustInterval {
-	return JustInterval{numerator: 80, denominator: 81}
-}
 func LesserMajorSecond() JustInterval {
 	return JustInterval{numerator: 10, denominator: 9}
 }
@@ -220,9 +229,11 @@ func Octave() JustInterval {
 	return JustInterval{numerator: 2, denominator: 1}
 }
 
-// Invert returns the octave complement of the interval (i.e. Octave / interval).
+// Invert returns the octave complement of the interval (2/1 ÷ interval).
+// The interval must be octave-reduced (i.e. in [1/1, 2/1]); compound intervals
+// such as a twelfth (3/1) will produce a musically incorrect result.
 func (i JustInterval) Invert() JustInterval {
-	return Octave().Subtract(i)
+	return Octave().Subtract(i.OctaveReduce())
 }
 
 // DeviationFromEqualTemperament returns the deviation in cents from the nearest
@@ -235,9 +246,11 @@ func (i JustInterval) DeviationFromEqualTemperament() float64 {
 
 var intervalNames = []JustInterval{
 	{1, 1, "Perfect Unison"},
+	{531441, 524288, "Pythagorean Comma"},
+	{32805, 32768, "Schisma"},
 	{225, 224, "Septimal Kleisma"},
-	{80, 81, "Syntonic Comma"},
-	{81, 80, "Grave Unison"},
+	{81, 80, "Syntonic Comma"},
+	{80, 81, "Grave Unison"},
 	{128, 125, "Dieses (Diminished Second)"},
 	{25, 24, "Just (Lesser) Chromatic Semitone"},
 	{256, 243, "Pythagorean Minor Second"},
@@ -250,11 +263,14 @@ var intervalNames = []JustInterval{
 	{10, 9, "Just (Lesser) Major Second"},
 	{9, 8, "Pythagorean (Greater) Major Second"},
 	{8, 7, "Septimal Major Second"},
+	{7, 6, "Septimal Minor Third"},
 	{6, 5, "Minor Third"},
 	{5, 4, "Major Third"},
+	{9, 7, "Septimal Major Third"},
 	{32, 27, "Pythagorean Minor Third"},
 	{81, 64, "Pythagorean Major Third"},
 	{4, 3, "Perfect Fourth"},
+	{11, 8, "Undecimal Tritone"},
 	{45, 32, "Augmented Fourth"},
 	{7, 5, "Septimal Augmented Fourth"},
 	{1024, 729, "Pythagorean Diminished Fifth"},
@@ -285,7 +301,7 @@ func (i JustInterval) String() string {
 }
 
 func (i JustInterval) ToCents() float64 {
-	return math.Log10(float64(i.numerator)/float64(i.denominator)) / math.Log10(2) * 1200
+	return math.Log2(float64(i.numerator)/float64(i.denominator)) * 1200
 }
 
 func (i JustInterval) Diff(other JustInterval) JustInterval {
@@ -338,18 +354,26 @@ func multipliers(base uint) [][]uint {
 }
 
 func justIntervalsFromMultipliers(multiplierList [][]uint, filter intervalFilterFunction) []JustInterval {
+	seen := make(map[JustInterval]bool)
 	var intervals []JustInterval
 	for _, multiplier := range multiplierList {
-		interval := JustInterval{numerator: multiplier[0], denominator: multiplier[1]}.OctaveReduce()
+		interval := JustInterval{numerator: multiplier[0], denominator: multiplier[1]}.OctaveReduce().Simplify()
 		if interval.IsDiminishedFifth() {
 			continue
 		}
 		if filter(interval) {
 			continue
 		}
+		if seen[interval] {
+			continue
+		}
+		seen[interval] = true
 		intervals = append(intervals, interval)
 	}
-	intervals = append(intervals, Octave())
+	octave := Octave()
+	if !seen[octave] {
+		intervals = append(intervals, octave)
+	}
 	SortIntervals(intervals)
 	return intervals
 }

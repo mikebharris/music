@@ -431,3 +431,36 @@ func Test_convertJustScaleToRelativeFrequencies(t *testing.T) {
 	// Then
 	assert.Equal(t, []float64{256, 271, 279, 288, 305, 314, 324, 341, 361, 372, 384, 407, 419, 432, 455, 482, 496, 512, 542, 559, 576, 610, 628, 648, 683, 723, 745, 768, 813, 838, 864, 910, 964, 993, 1024}, frequencies)
 }
+
+func Test_ShouldReturnHarmonicSeriesScaleForFirstEightPartials(t *testing.T) {
+	// Given
+	scale := NewHarmonicSeriesScale(8)
+
+	// When
+	intervals := scale.Intervals()
+
+	// Then
+	assert.Equal(t, "Harmonic Series", scale.System())
+	assert.Equal(t, 5, len(intervals))
+	assert.Equal(t, Unison(), intervals[0])
+	assert.Equal(t, JustInterval{numerator: 5, denominator: 4}, intervals[1])
+	assert.Equal(t, JustInterval{numerator: 3, denominator: 2}, intervals[2])
+	assert.Equal(t, JustInterval{numerator: 7, denominator: 4}, intervals[3])
+	assert.Equal(t, JustInterval{numerator: 2, denominator: 1}, intervals[4])
+}
+
+func Test_ASchismaIsTheDifferenceBetwixtAPythagoreanCommaAndASyntonicComma(t *testing.T) {
+	// Given
+	s := Schisma()
+	pc := PythagoreanComma()
+	sc := SyntonicComma()
+
+	// Then
+	assert.Equal(t, uint(32805), s.Numerator())
+	assert.Equal(t, uint(32768), s.Denominator())
+	assert.Equal(t, uint(531441), pc.Numerator())
+	assert.Equal(t, uint(524288), pc.Denominator())
+	assert.Equal(t, uint(81), sc.Numerator())
+	assert.Equal(t, uint(80), sc.Denominator())
+	assert.Equal(t, s, PythagoreanComma().Subtract(SyntonicComma()))
+}

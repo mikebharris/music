@@ -7,6 +7,10 @@ import (
 
 type TemperedInterval float64
 
+func FromCents(cents float64) TemperedInterval {
+	return TemperedInterval(math.Exp2(cents / 1200))
+}
+
 func (i TemperedInterval) Value() float64 {
 	return float64(i)
 }

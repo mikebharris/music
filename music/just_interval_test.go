@@ -730,9 +730,7 @@ func TestInterval_toCents(t *testing.T) {
 				numerator:   tt.fields.numerator,
 				denominator: tt.fields.denominator,
 			}
-			if got := i.ToCents(); got != tt.want {
-				t.Errorf("toCents() = %v, want %v", got, tt.want)
-			}
+			assert.InDelta(t, tt.want, i.ToCents(), 1e-9)
 		})
 	}
 }

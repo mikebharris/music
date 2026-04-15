@@ -54,12 +54,13 @@ func (s TemperedScale) Intervals() []TemperedInterval {
 
 func (s TemperedScale) ToFrequenciesForTonicOf(tonic float64, octaves uint) []float64 {
 	var frequencies []float64
-	for octave := uint(1); octave <= octaves; octave++ {
+	for octave := uint(0); octave < octaves; octave++ {
+		octaveMultiplier := math.Pow(2, float64(octave))
 		for _, interval := range s.Intervals() {
-			if interval.IsUnison() && octave > 1 {
+			if interval.IsUnison() && octave > 0 {
 				continue
 			}
-			frequencies = append(frequencies, math.Round(float64(octave)*tonic*interval.Value()*100)/100)
+			frequencies = append(frequencies, math.Round(octaveMultiplier*tonic*interval.Value()*100)/100)
 		}
 	}
 	return frequencies
@@ -125,7 +126,7 @@ func computeBachScale() []TemperedInterval {
 	// Calculate tempered fifths
 	temperedFifths := make([]float64, 12)
 	for i := 0; i < 12; i++ {
-		temperedFifths[i] = 3.0 / 2.0 * math.Pow(SyntonicComma().ToFloat(), temperingFractions[i])
+		temperedFifths[i] = 3.0 / 2.0 * math.Pow(PythagoreanComma().ToFloat(), temperingFractions[i])
 	}
 
 	// Derive ratios by walking the circle of fifths
