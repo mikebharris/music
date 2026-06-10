@@ -3,7 +3,7 @@ module github.com/mikebharris/music/scala
 go 1.26.2
 
 require (
-	github.com/mikebharris/music/music v0.4.0
+	github.com/mikebharris/music/music v0.4.5
 	github.com/stretchr/testify v1.11.1
 )
 

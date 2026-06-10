@@ -2,6 +2,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/mikebharris/music/music v0.4.0 h1:5Wd9Kx3Gwc/7jczp8nENP1YPUrpUpncyHd81GZ5n86Y=
 github.com/mikebharris/music/music v0.4.0/go.mod h1:b8gXJDyZiXz+AvyZC1qsf9uAeUk+v5548vHunSQgF4M=
+github.com/mikebharris/music/music v0.4.5 h1:myZ4OjIn9d/fCNT3NxiPEc+PEX/ofAVKqYl8DA16Ss0=
+github.com/mikebharris/music/music v0.4.5/go.mod h1:RKXRnq2nFyjX1nN390TFTRvk4mWP2wJWSCMwU3R5J7w=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
