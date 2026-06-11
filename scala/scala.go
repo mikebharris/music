@@ -6,8 +6,8 @@ import (
 	"github.com/mikebharris/music/music"
 )
 
-func NewScalaScaleFileFromScale[T music.JustScale | music.TemperedScale](filename string, scale T) string {
-	switch s := any(scale).(type) {
+func NewScalaScaleFileFromScale(filename string, scale music.Scale) string {
+	switch s := scale.(type) {
 	case music.JustScale:
 		return newScalaScaleFileFromJustScale(filename, s)
 	case music.TemperedScale:
