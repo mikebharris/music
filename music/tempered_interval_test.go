@@ -12,7 +12,8 @@ func TestTemperedInterval_String(t *testing.T) {
 		i    TemperedInterval
 		want string
 	}{
-		{name: "Test String() method", i: TemperedInterval(1.5), want: "1.50"},
+		{name: "Test String() method", i: TemperedInterval(1.5), want: "1.5"},
+		{name: "Full precision for irrational ratio", i: FromCents(100), want: "1.0594630943592953"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

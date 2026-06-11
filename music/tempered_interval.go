@@ -1,8 +1,8 @@
 package music
 
 import (
-	"fmt"
 	"math"
+	"strconv"
 )
 
 type TemperedInterval float64
@@ -24,7 +24,7 @@ func (i TemperedInterval) ToFloat() float64 {
 }
 
 func (i TemperedInterval) String() string {
-	return fmt.Sprintf("%.2f", i.ToFloat())
+	return strconv.FormatFloat(i.ToFloat(), 'f', -1, 64)
 }
 
 func (i TemperedInterval) IsUnison() bool {
