@@ -52,6 +52,14 @@ func (s TemperedScale) Intervals() []TemperedInterval {
 	return s.algorithm()
 }
 
+func (s TemperedScale) IntervalStrings() []string {
+	var result []string
+	for _, i := range s.Intervals() {
+		result = append(result, i.String())
+	}
+	return result
+}
+
 func (s TemperedScale) ToFrequenciesForTonicOf(tonic float64, octaves uint) []float64 {
 	var frequencies []float64
 	for octave := uint(0); octave < octaves; octave++ {

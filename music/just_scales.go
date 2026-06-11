@@ -229,6 +229,14 @@ func (s JustScale) Intervals() []JustInterval {
 	return s.algorithm()
 }
 
+func (s JustScale) IntervalStrings() []string {
+	var result []string
+	for _, i := range s.Intervals() {
+		result = append(result, i.String())
+	}
+	return result
+}
+
 func (s JustScale) ToFrequenciesForTonicOf(tonic uint, octaves uint) []float64 {
 	var frequencies []float64
 	for octave := uint(0); octave < octaves; octave++ {
@@ -250,7 +258,7 @@ type computeJustIntervalsFn func() []JustInterval
 // step intervals. Defined at package level to avoid re-allocation on every call.
 var ptolemyIntenseDiatonicSteps = map[MusicalMode][]JustInterval{
 	LydianMode:     {GreaterMajorSecond(), LesserMajorSecond(), GreaterMajorSecond(), DiatonicSemitone(), LesserMajorSecond(), GreaterMajorSecond(), DiatonicSemitone()},
-	IonianMode:     {GreaterMajorSecond(), LesserMajorSecond(), DiatonicSemitone(), GreaterMajorSecond(), LesserMajorSecond(), GreaterMajorSecond(), DiatonicSemitone()},
+	"Ionian":       {GreaterMajorSecond(), LesserMajorSecond(), DiatonicSemitone(), GreaterMajorSecond(), LesserMajorSecond(), GreaterMajorSecond(), DiatonicSemitone()},
 	MixolydianMode: {GreaterMajorSecond(), LesserMajorSecond(), DiatonicSemitone(), GreaterMajorSecond(), LesserMajorSecond(), DiatonicSemitone(), GreaterMajorSecond()},
 	DorianMode:     {GreaterMajorSecond(), DiatonicSemitone(), LesserMajorSecond(), GreaterMajorSecond(), LesserMajorSecond(), DiatonicSemitone(), GreaterMajorSecond()},
 	AeolianMode:    {GreaterMajorSecond(), DiatonicSemitone(), LesserMajorSecond(), GreaterMajorSecond(), DiatonicSemitone(), GreaterMajorSecond(), LesserMajorSecond()},

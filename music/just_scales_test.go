@@ -431,7 +431,7 @@ func Test_ShouldReturnIntenseDiatonicScaleInLydianModeWithScaleDegrees(t *testin
 
 func Test_ShouldReturnIntenseDiatonicScaleInIonianModeWithScaleDegrees(t *testing.T) {
 	// Given
-	scale := NewIntenseDiatonicScale(IonianMode)
+	scale := NewIntenseDiatonicScale("Ionian")
 
 	// When
 	intervals := scale.Intervals()

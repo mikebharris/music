@@ -6,6 +6,13 @@ type Interval interface {
 	JustInterval | TemperedInterval
 }
 
+// Scale is implemented by both JustScale and TemperedScale.
+type Scale interface {
+	System() string
+	Description() string
+	IntervalStrings() []string
+}
+
 // NoteName represents a Western note letter name (A–H, where H is used in German notation).
 // These constants are defined for future use in note-naming functionality.
 type NoteName rune
