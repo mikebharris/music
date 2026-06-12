@@ -258,7 +258,7 @@ type computeJustIntervalsFn func() []JustInterval
 // step intervals. Defined at package level to avoid re-allocation on every call.
 var ptolemyIntenseDiatonicSteps = map[MusicalMode][]JustInterval{
 	LydianMode:     {GreaterMajorSecond(), LesserMajorSecond(), GreaterMajorSecond(), DiatonicSemitone(), LesserMajorSecond(), GreaterMajorSecond(), DiatonicSemitone()},
-	"Ionian":       {GreaterMajorSecond(), LesserMajorSecond(), DiatonicSemitone(), GreaterMajorSecond(), LesserMajorSecond(), GreaterMajorSecond(), DiatonicSemitone()},
+	IonianMode:     {GreaterMajorSecond(), LesserMajorSecond(), DiatonicSemitone(), GreaterMajorSecond(), LesserMajorSecond(), GreaterMajorSecond(), DiatonicSemitone()},
 	MixolydianMode: {GreaterMajorSecond(), LesserMajorSecond(), DiatonicSemitone(), GreaterMajorSecond(), LesserMajorSecond(), DiatonicSemitone(), GreaterMajorSecond()},
 	DorianMode:     {GreaterMajorSecond(), DiatonicSemitone(), LesserMajorSecond(), GreaterMajorSecond(), LesserMajorSecond(), DiatonicSemitone(), GreaterMajorSecond()},
 	AeolianMode:    {GreaterMajorSecond(), DiatonicSemitone(), LesserMajorSecond(), GreaterMajorSecond(), DiatonicSemitone(), GreaterMajorSecond(), LesserMajorSecond()},
