@@ -13,6 +13,7 @@ func Test_newFretboardFromJustScale(t *testing.T) {
 		length  float64
 		octaves int
 		scale   music.JustScale
+		mode    music.MusicalMode
 	}
 	tests := []struct {
 		name string
@@ -28,7 +29,7 @@ func Test_newFretboardFromJustScale(t *testing.T) {
 			},
 			want: Fretboard{
 				System:      "2-limit Just Intonation",
-				Description: "Fret positions based on Just Intonation chromatic scale based on 2-limit pure ratios.",
+				Description: "Chromatic fret positions based on Just Intonation chromatic scale based on 2-limit pure ratios.",
 				ScaleLength: 650.0,
 				Frets: []Fret{
 					{Position: 0, Comment: "Perfect Unison", Interval: "1:1", Cents: 0.0},
@@ -38,10 +39,41 @@ func Test_newFretboardFromJustScale(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "Test Just Scale Diatonic Fretboard",
+			args: args{
+				length:  650.0,
+				octaves: 2,
+				scale:   music.NewJustIntonationChromaticScaleWithLimit(5),
+				mode:    music.IonianMode,
+			},
+			want: Fretboard{
+				System:      "5-limit Just Intonation",
+				Description: "Diatonic (Ionian) fret positions based on Just Intonation chromatic scale based on 5-limit pure ratios.",
+				ScaleLength: 650.0,
+				Frets: []Fret{
+					{Position: 0, Comment: "Perfect Unison", Interval: "1:1", Cents: 0},
+					{Position: 72.22, Comment: "Pythagorean (Greater) Major Second", Interval: "9:8", Cents: 203.91000173077498},
+					{Position: 130, Comment: "Major Third", Interval: "5:4", Cents: 386.31371386483477},
+					{Position: 162.5, Comment: "Perfect Fourth", Interval: "4:3", Cents: 498.04499913461245},
+					{Position: 216.67, Comment: "Perfect Fifth", Interval: "3:2", Cents: 701.9550008653875},
+					{Position: 260, Comment: "Major Sixth", Interval: "5:3", Cents: 884.3587129994474},
+					{Position: 303.33, Comment: "Just Major Seventh", Interval: "15:8", Cents: 1088.2687147302222},
+					{Position: 325, Comment: "Perfect Octave", Interval: "2:1", Cents: 1200},
+					{Position: 361.11, Comment: "Pythagorean (Greater) Major Second", Interval: "9:4", Cents: 1403.910001730775},
+					{Position: 390, Comment: "Major Third", Interval: "5:2", Cents: 1586.3137138648349},
+					{Position: 406.25, Comment: "Perfect Fourth", Interval: "8:3", Cents: 1698.0449991346125},
+					{Position: 433.33, Comment: "Perfect Fifth", Interval: "3:1", Cents: 1901.9550008653875},
+					{Position: 455, Comment: "Major Sixth", Interval: "10:3", Cents: 2084.3587129994476},
+					{Position: 476.67, Comment: "Just Major Seventh", Interval: "15:4", Cents: 2288.268714730222},
+					{Position: 487.5, Comment: "Perfect Octave", Interval: "4:1", Cents: 2400},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewFretboardFromJustScale(tt.args.length, tt.args.octaves, tt.args.scale); !reflect.DeepEqual(got, tt.want) {
+			if got := NewFretboardFromJustScale(tt.args.length, tt.args.octaves, tt.args.scale, tt.args.mode); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newFretboardFromJustScale() = %v, want %v", got, tt.want)
 			}
 		})

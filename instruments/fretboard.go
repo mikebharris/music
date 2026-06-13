@@ -29,13 +29,13 @@ func (f Fretboard) String() string {
 	return string(b)
 }
 
-func NewFretboardFromJustScale(length float64, octaves int, scale music.JustScale) Fretboard {
+func NewFretboardFromJustScale(length float64, octaves int, scale music.JustScale, mode music.MusicalMode) Fretboard {
 	fretboard := Fretboard{
 		System:      scale.System(),
-		Description: fmt.Sprintf("Fret positions based on %s", scale.Description()),
+		Description: fmt.Sprintf("%s fret positions based on %s", scaleTypeFromMode(mode), scale.Description()),
 		ScaleLength: length,
 	}
-	fretboard.makeJustFrets(scale.Intervals(), octaves)
+	fretboard.makeJustFrets(scale.Intervals(), mode, octaves)
 	return fretboard
 }
 
@@ -95,11 +95,15 @@ func diatonicFretMap(intervalPosition int, mode music.MusicalMode) bool {
 	return true
 }
 
-func (f *Fretboard) makeJustFrets(intervals []music.JustInterval, octaves int) {
+func (f *Fretboard) makeJustFrets(intervals []music.JustInterval, mode music.MusicalMode, octaves int) {
 	for octave := 0; octave < octaves; octave++ {
 		for _, interval := range intervals {
 			if octave > 0 && interval == music.Unison() {
 				continue // skip unison on subsequent octaves
+			}
+			semitone := int(math.Round(interval.ToCents() / 100))
+			if mode.IsDiatonic() && semitone > 0 && !diatonicFretMap(semitone, mode) {
+				continue
 			}
 			// Fret position: distance from nut = ScaleLength * (1 - denom / (numer * 2^octave))
 			position := f.ScaleLength * (1 - float64(interval.Denominator())/(float64(interval.Numerator())*math.Pow(2, float64(octave))))
