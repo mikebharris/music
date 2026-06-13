@@ -96,22 +96,19 @@ func diatonicFretMap(intervalPosition int, mode music.MusicalMode) bool {
 }
 
 func (f *Fretboard) makeJustFrets(intervals []music.JustInterval, octaves int) {
-	var previousInterval = music.Unison()
 	for octave := 0; octave < octaves; octave++ {
 		for _, interval := range intervals {
 			if octave > 0 && interval == music.Unison() {
-				previousInterval = music.Unison()
 				continue // skip unison on subsequent octaves
 			}
 			// Fret position: distance from nut = ScaleLength * (1 - denom / (numer * 2^octave))
 			position := f.ScaleLength * (1 - float64(interval.Denominator())/(float64(interval.Numerator())*math.Pow(2, float64(octave))))
 			f.Frets = append(f.Frets, Fret{
-				Label:    interval.String(),
 				Position: math.Round(position*100) / 100,
 				Comment:  interval.Name(),
-				Interval: interval.Subtract(previousInterval).String(),
+				Interval: music.Octave().ToPowerOf(octave).Add(interval).String(),
+				Cents:    (float64(octave) * music.Octave().ToCents()) + interval.ToCents(),
 			})
-			previousInterval = interval
 		}
 	}
 }

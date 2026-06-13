@@ -23,7 +23,7 @@ func Test_newFretboardFromJustScale(t *testing.T) {
 			name: "Test Just Scale Fretboard",
 			args: args{
 				length:  650.0,
-				octaves: 2,
+				octaves: 3,
 				scale:   music.NewJustIntonationChromaticScaleWithLimit(2),
 			},
 			want: Fretboard{
@@ -31,9 +31,10 @@ func Test_newFretboardFromJustScale(t *testing.T) {
 				Description: "Fret positions based on Just Intonation chromatic scale based on 2-limit pure ratios.",
 				ScaleLength: 650.0,
 				Frets: []Fret{
-					{Label: "1:1", Position: 0, Comment: "Perfect Unison", Interval: "1:1"},
-					{Label: "2:1", Position: 325.0, Comment: "Perfect Octave", Interval: "2:1"},
-					{Label: "2:1", Position: 487.5, Comment: "Perfect Octave", Interval: "2:1"},
+					{Position: 0, Comment: "Perfect Unison", Interval: "1:1", Cents: 0.0},
+					{Position: 325.0, Comment: "Perfect Octave", Interval: "2:1", Cents: 1200.0},
+					{Position: 487.5, Comment: "Perfect Octave", Interval: "4:1", Cents: 2400.00},
+					{Position: 568.75, Comment: "Perfect Octave", Interval: "8:1", Cents: 3600.00},
 				},
 			},
 		},
@@ -194,7 +195,7 @@ func Test_newFretboardFromTemperedScale(t *testing.T) {
 				Frets: []Fret{
 					{Position: 0, Interval: "1"},
 					{Position: 70.92, Interval: "1.122462048309373", Cents: 200},
-					{Position: 103.42, Interval: "1.189207115002721", Cents: 300}, // flattened third
+					{Position: 103.42, Interval: "1.189207115002721", Cents: 300},  // flattened third
 					{Position: 163.05, Interval: "1.3348398541700344", Cents: 500}, // perfect 4th
 					{Position: 216.18, Interval: "1.4983070768766815", Cents: 700},
 					{Position: 263.51, Interval: "1.6817928305074292", Cents: 900},
@@ -218,7 +219,7 @@ func Test_newFretboardFromTemperedScale(t *testing.T) {
 				Frets: []Fret{
 					{Position: 0, Interval: "1"},
 					{Position: 70.92, Interval: "1.122462048309373", Cents: 200},
-					{Position: 103.42, Interval: "1.189207115002721", Cents: 300}, // flattened 3rd
+					{Position: 103.42, Interval: "1.189207115002721", Cents: 300},  // flattened 3rd
 					{Position: 163.05, Interval: "1.3348398541700344", Cents: 500}, // perfect 4th
 					{Position: 216.18, Interval: "1.4983070768766815", Cents: 700},
 					{Position: 240.53, Interval: "1.5874010519681994", Cents: 800}, // flattened 6th
@@ -289,11 +290,11 @@ func Test_newFretboardFromTemperedScale(t *testing.T) {
 				ScaleLength: 650.0,
 				Frets: []Fret{
 					{Position: 0, Interval: "1"},
-					{Position: 68.6, Interval: "1.118", Cents: 193.1},    // major 2nd
-					{Position: 106.52, Interval: "1.196", Cents: 309.86}, // minor 3rd
-					{Position: 163.84, Interval: "1.337", Cents: 502.8},  // perfect 4th
-					{Position: 215.22, Interval: "1.495", Cents: 696.17}, // perfect 5th
-					{Position: 243.75, Interval: "1.6", Cents: 813.69},   // minor 6th
+					{Position: 68.6, Interval: "1.118", Cents: 193.1},     // major 2nd
+					{Position: 106.52, Interval: "1.196", Cents: 309.86},  // minor 3rd
+					{Position: 163.84, Interval: "1.337", Cents: 502.8},   // perfect 4th
+					{Position: 215.22, Interval: "1.495", Cents: 696.17},  // perfect 5th
+					{Position: 243.75, Interval: "1.6", Cents: 813.69},    // minor 6th
 					{Position: 286.67, Interval: "1.789", Cents: 1006.98}, // minor 7th
 					{Position: 325, Interval: "2", Cents: 1200},
 				},
