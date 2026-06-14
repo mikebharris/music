@@ -282,6 +282,7 @@ var intervalNames = []JustInterval{
 	{8, 5, "Just Minor Sixth"},
 	{128, 81, "Pythagorean Minor Sixth"},
 	{5, 3, "Major Sixth"},
+	{225, 128, "Acute Augmented Sixth"},
 	{27, 16, "Pythagorean Major Sixth"},
 	{16, 9, "Pythagorean (Lesser) Minor Seventh"},
 	{9, 5, "Just (Greater) Minor Seventh"},
@@ -289,6 +290,9 @@ var intervalNames = []JustInterval{
 	{15, 8, "Just Major Seventh"},
 	{13, 7, "Tridecimal Major Seventh"},
 	{243, 128, "Pythagorean Major Seventh"},
+	{48, 25, "Diminished Octave"},
+	{125, 64, "Just Augmented Seventh"},
+	{160, 81, "Grave Octave"},
 	{2, 1, "Perfect Octave"},
 }
 
