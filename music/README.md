@@ -14,6 +14,8 @@ This Go module provides types and functions to represent and manipulate musical 
   - Turkish Saz Scale
   - Ptolemaic Scale
   - X-Limit Chromatic Scale
+  - Harry Partch's 43-tone "Genesis" Scale
+  - Derived from the Harmonic Series
   - User-defined scales
 - Functions for manipulating intervals
   - Addition and subtraction of intervals
