@@ -12,6 +12,41 @@ type JustScale struct {
 	algorithm   computeJustIntervalsFn
 }
 
+func (s JustScale) System() string {
+	return s.system
+}
+
+func (s JustScale) Description() string {
+	return s.description
+}
+
+func (s JustScale) Intervals() []JustInterval {
+	return s.algorithm()
+}
+
+func (s JustScale) IntervalStrings() []string {
+	var result []string
+	for _, i := range s.Intervals() {
+		result = append(result, i.String())
+	}
+	return result
+}
+
+func (s JustScale) ToFrequenciesForTonicOf(tonic uint, octaves uint) []float64 {
+	var frequencies []float64
+	for octave := uint(0); octave < octaves; octave++ {
+		octaveMultiplier := math.Pow(2, float64(octave))
+		for _, interval := range s.Intervals() {
+			if interval.IsEqualTo(Unison()) && octave > 0 {
+				continue
+			}
+			f := float64(tonic) * octaveMultiplier * float64(interval.Numerator()) / float64(interval.Denominator())
+			frequencies = append(frequencies, math.Round(f))
+		}
+	}
+	return frequencies
+}
+
 func NewPythagoreanScale() JustScale {
 	return JustScale{
 		system:      "Pythagorean",
@@ -44,28 +79,6 @@ func NewJustIntonationChromaticScaleWithLimitAndFilter(limit int, filter func(in
 	}
 }
 
-func computeJustScaleWithLimit(limit int, filter func(interval JustInterval) bool) []JustInterval {
-	var primeMultipliers [][][]uint
-	for p := 2; p <= limit; p++ {
-		if isPrime(p) {
-			primeMultipliers = append(primeMultipliers, multipliers(uint(p)))
-		}
-	}
-	return computeJustScale(buildMultiplierTablesFrom(primeMultipliers...), filter)
-}
-
-func isPrime(n int) bool {
-	if n <= 1 {
-		return false
-	}
-	for i := 2; i <= int(math.Sqrt(float64(n))); i++ {
-		if n%i == 0 {
-			return false
-		}
-	}
-	return true
-}
-
 func NewIntenseDiatonicScale(mode MusicalMode) JustScale {
 	return JustScale{
 		system:      "Ptolemy Intense Diatonic",
@@ -85,27 +98,12 @@ func NewSazScale() JustScale {
 	}
 }
 
-// NewPartch43ToneScale returns Harry Partch's 43-tone 11-limit scale as described
-// in Genesis of a Music (1949/1974). The scale consists of 43 intervals per octave
-// (44 entries including the octave) built from otonalities and utonalities on the
-// 11-limit diamond, arranged in ascending pitch order.
 func NewPartch43ToneScale() JustScale {
 	return JustScale{
 		system:      "Partch 43-tone",
 		description: "Harry Partch's 43-tone 11-limit just intonation scale from Genesis of a Music.",
 		algorithm:   computePartch43ToneScale,
 	}
-}
-
-func computePartch43ToneScale() []JustInterval {
-	return IntervalsFromIntegers([][]uint{
-		{1, 1}, {81, 80}, {33, 32}, {21, 20}, {16, 15}, {12, 11}, {11, 10}, {10, 9},
-		{9, 8}, {8, 7}, {7, 6}, {32, 27}, {6, 5}, {11, 9}, {5, 4}, {14, 11},
-		{9, 7}, {21, 16}, {4, 3}, {27, 20}, {11, 8}, {7, 5}, {10, 7}, {16, 11},
-		{40, 27}, {3, 2}, {32, 21}, {14, 9}, {11, 7}, {8, 5}, {18, 11}, {5, 3},
-		{27, 16}, {12, 7}, {7, 4}, {16, 9}, {9, 5}, {20, 11}, {11, 6}, {15, 8},
-		{40, 21}, {64, 33}, {160, 81}, {2, 1},
-	})
 }
 
 func NewJustIntonationChromaticScaleWith(description string, intervals [][]uint) JustScale {
@@ -144,39 +142,40 @@ func NewHarmonicSeriesScale(partials uint) JustScale {
 	}
 }
 
-func (s JustScale) System() string {
-	return s.system
-}
-
-func (s JustScale) Description() string {
-	return s.description
-}
-
-func (s JustScale) Intervals() []JustInterval {
-	return s.algorithm()
-}
-
-func (s JustScale) IntervalStrings() []string {
-	var result []string
-	for _, i := range s.Intervals() {
-		result = append(result, i.String())
-	}
-	return result
-}
-
-func (s JustScale) ToFrequenciesForTonicOf(tonic uint, octaves uint) []float64 {
-	var frequencies []float64
-	for octave := uint(0); octave < octaves; octave++ {
-		octaveMultiplier := math.Pow(2, float64(octave))
-		for _, interval := range s.Intervals() {
-			if interval.IsUnison() && octave > 0 {
-				continue
-			}
-			f := float64(tonic) * octaveMultiplier * float64(interval.Numerator()) / float64(interval.Denominator())
-			frequencies = append(frequencies, math.Round(f))
+func computeJustScaleWithLimit(limit int, filter func(interval JustInterval) bool) []JustInterval {
+	var primeMultipliers [][][]uint
+	for p := 3; p <= limit; p++ {
+		if isPrime(p) {
+			primeMultipliers = append(primeMultipliers, multipliers(uint(p)))
 		}
 	}
-	return frequencies
+	return computeJustScale(buildMultiplierTablesFrom(primeMultipliers...), filter)
+}
+
+func isPrime(n int) bool {
+	if n <= 1 {
+		return false
+	}
+	for i := 2; i <= int(math.Sqrt(float64(n))); i++ {
+		if n%i == 0 {
+			return false
+		}
+	}
+	return true
+}
+
+func computePartch43ToneScale() []JustInterval {
+	// NewPartch43ToneScale returns Harry Partch's 43-tone "Genesis" 11-limit scale
+	// as described in Genesis of a Music (1949/1974).
+	// See https://en.xen.wiki/w/Harry_Partch%27s_43-tone_scale
+	return IntervalsFromIntegers([][]uint{
+		{1, 1}, {81, 80}, {33, 32}, {21, 20}, {16, 15}, {12, 11}, {11, 10}, {10, 9},
+		{9, 8}, {8, 7}, {7, 6}, {32, 27}, {6, 5}, {11, 9}, {5, 4}, {14, 11},
+		{9, 7}, {21, 16}, {4, 3}, {27, 20}, {11, 8}, {7, 5}, {10, 7}, {16, 11},
+		{40, 27}, {3, 2}, {32, 21}, {14, 9}, {11, 7}, {8, 5}, {18, 11}, {5, 3},
+		{27, 16}, {12, 7}, {7, 4}, {16, 9}, {9, 5}, {20, 11}, {11, 6}, {15, 8},
+		{40, 21}, {64, 33}, {160, 81}, {2, 1},
+	})
 }
 
 type computeJustIntervalsFn func() []JustInterval

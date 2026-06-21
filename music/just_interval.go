@@ -25,32 +25,8 @@ func (i JustInterval) Denominator() uint {
 	return i.denominator
 }
 
-func (i JustInterval) IsUnison() bool {
-	return i.numerator == 1 && i.denominator == 1
-}
-
 func (i JustInterval) IsEqualTo(other JustInterval) bool {
 	return i.numerator == other.numerator && i.denominator == other.denominator
-}
-
-func (i JustInterval) IsDiminishedFifth() bool {
-	return i.numerator == 64 && i.denominator == 45
-}
-
-func (i JustInterval) IsLesserMajorSecond() bool {
-	return i.numerator == 10 && i.denominator == 9
-}
-
-func (i JustInterval) IsGreaterMajorSecond() bool {
-	return i.numerator == 9 && i.denominator == 8
-}
-
-func (i JustInterval) IsLesserMinorSeventh() bool {
-	return i.numerator == 16 && i.denominator == 9
-}
-
-func (i JustInterval) IsGreaterMinorSeventh() bool {
-	return i.numerator == 9 && i.denominator == 5
 }
 
 func (i JustInterval) Add(other JustInterval) JustInterval {
@@ -62,21 +38,9 @@ func (i JustInterval) Add(other JustInterval) JustInterval {
 	return interval
 }
 
-func (i JustInterval) IsPerfectFourth() bool {
-	return i.numerator == 4 && i.denominator == 3
-}
-
 func (i JustInterval) IsPerfect() bool {
 	simplestForm := i.OctaveReduce().Simplify()
-	return simplestForm.IsUnison() || simplestForm.IsPerfectFourth() || simplestForm.IsPerfectFifth() || simplestForm.IsOctave()
-}
-
-func (i JustInterval) IsPerfectFifth() bool {
-	return i.numerator == 3 && i.denominator == 2
-}
-
-func (i JustInterval) IsOctave() bool {
-	return i.numerator == 2 && i.denominator == 1
+	return simplestForm.IsEqualTo(Unison()) || simplestForm.IsEqualTo(PerfectFourth()) || simplestForm.IsEqualTo(PerfectFifth()) || simplestForm.IsEqualTo(Octave())
 }
 
 func (i JustInterval) Simplify() JustInterval {
@@ -213,18 +177,42 @@ func JustChromaticSemitone() JustInterval {
 	return JustInterval{numerator: 25, denominator: 24}
 }
 
-func LesserMajorSecond() JustInterval {
-	return JustInterval{numerator: 10, denominator: 9}
-}
-func GreaterMajorSecond() JustInterval {
-	return JustInterval{numerator: 9, denominator: 8}
-}
 func DiatonicSemitone() JustInterval {
 	return JustInterval{numerator: 16, denominator: 15}
 }
+
+func LesserMajorSecond() JustInterval {
+	return JustInterval{numerator: 10, denominator: 9}
+}
+
+func GreaterMajorSecond() JustInterval {
+	return JustInterval{numerator: 9, denominator: 8}
+}
+
+func AugmentedForth() JustInterval {
+	return JustInterval{numerator: 25, denominator: 18}
+}
+
+func SmallerPentalTritone() JustInterval {
+	return JustInterval{numerator: 45, denominator: 32}
+}
+
+func DiminishedFifth() JustInterval {
+	return JustInterval{numerator: 64, denominator: 45}
+}
+
 func PerfectFifth() JustInterval {
 	return JustInterval{numerator: 3, denominator: 2}
 }
+
+func LesserMinorSeventh() JustInterval {
+	return JustInterval{numerator: 16, denominator: 9}
+}
+
+func GreaterMinorSeventh() JustInterval {
+	return JustInterval{numerator: 9, denominator: 5}
+}
+
 func Octave() JustInterval {
 	return JustInterval{numerator: 2, denominator: 1}
 }
@@ -274,7 +262,8 @@ var intervalNames = []JustInterval{
 	{4, 3, "Perfect Fourth"},
 	{12, 16, "Septimal Sub Forth"},
 	{11, 8, "Undecimal Tritone"},
-	{45, 32, "Augmented Fourth"},
+	{25, 18, "Diptolemaic Augmented Forth"},
+	{45, 32, "Ptolemaic Augmented Fourth"},
 	{7, 5, "Septimal Augmented Fourth"},
 	{1024, 729, "Pythagorean Diminished Fifth"},
 	{729, 512, "Pythagorean Augmented Fourth"},
@@ -345,7 +334,7 @@ type intervalFilterFunction func(ratio JustInterval) bool
 // chromatic scale has enough distinct pitches; all other bases use power 1.
 func multipliers(base uint) [][]uint {
 	power := 1
-	if base == 3 {
+	if base >= 3 && base <= 5 {
 		power = 2
 	}
 	result := make([][]uint, 0, 2*power+1)
@@ -366,7 +355,7 @@ func justIntervalsFromMultipliers(multiplierList [][]uint, filter intervalFilter
 	var intervals []JustInterval
 	for _, multiplier := range multiplierList {
 		interval := JustInterval{numerator: multiplier[0], denominator: multiplier[1]}.OctaveReduce().Simplify()
-		if interval.IsDiminishedFifth() {
+		if interval.IsEqualTo(DiminishedFifth()) {
 			continue
 		}
 		if filter(interval) {

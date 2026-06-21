@@ -224,38 +224,6 @@ func TestInterval_greaterThan(t *testing.T) {
 	}
 }
 
-func TestInterval_isDiminishedFifth(t *testing.T) {
-	type fields struct {
-		numerator   uint
-		denominator uint
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   bool
-	}{
-		{
-			name: "Diminished fifth test for diminished fifth interval",
-			fields: fields{
-				numerator:   64,
-				denominator: 45,
-			},
-			want: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			i := JustInterval{
-				numerator:   tt.fields.numerator,
-				denominator: tt.fields.denominator,
-			}
-			if got := i.IsDiminishedFifth(); got != tt.want {
-				t.Errorf("isDiminishedFifth() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestInterval_isEqualTo(t *testing.T) {
 	type fields struct {
 		numerator   uint
@@ -312,38 +280,6 @@ func TestInterval_isEqualTo(t *testing.T) {
 	}
 }
 
-func TestInterval_isOctave(t *testing.T) {
-	type fields struct {
-		numerator   uint
-		denominator uint
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   bool
-	}{
-		{
-			name: "Octave test for octave interval",
-			fields: fields{
-				numerator:   2,
-				denominator: 1,
-			},
-			want: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			i := JustInterval{
-				numerator:   tt.fields.numerator,
-				denominator: tt.fields.denominator,
-			}
-			if got := i.IsOctave(); got != tt.want {
-				t.Errorf("isOctave() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestInterval_isPerfect(t *testing.T) {
 	type fields struct {
 		numerator   uint
@@ -395,38 +331,6 @@ func TestInterval_isPerfect(t *testing.T) {
 			}
 			if got := i.IsPerfect(); got != tt.want {
 				t.Errorf("isPerfect() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestInterval_isPerfectFifth(t *testing.T) {
-	type fields struct {
-		numerator   uint
-		denominator uint
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   bool
-	}{
-		{
-			name: "Perfect fifth test for perfect fifth interval",
-			fields: fields{
-				numerator:   3,
-				denominator: 2,
-			},
-			want: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			i := JustInterval{
-				numerator:   tt.fields.numerator,
-				denominator: tt.fields.denominator,
-			}
-			if got := i.IsPerfectFifth(); got != tt.want {
-				t.Errorf("isPerfectFifth() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -959,7 +863,7 @@ func Test_multipliers(t *testing.T) {
 			args: args{
 				base: 5,
 			},
-			want: [][]uint{{5, 1}, {1, 1}, {1, 5}},
+			want: [][]uint{{25, 1}, {5, 1}, {1, 1}, {1, 5}, {1, 25}},
 		},
 		{
 			name: "3 is a special case and generates more multipliers in order for there to be enough notes in the scale",
