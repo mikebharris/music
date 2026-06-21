@@ -64,3 +64,31 @@ func Test_ShouldGenerateScalaFileForTwelveToneEqualTemperamentScale(t *testing.T
 	assert.Equal(t, "1100.00", contents[15])
 	assert.Equal(t, "1200.00", contents[16])
 }
+
+type AnotherScale struct {
+	system      string
+	description string
+}
+
+func (s AnotherScale) System() string {
+	panic("not implemented")
+}
+
+func (s AnotherScale) Description() string {
+	panic("not implemented")
+}
+
+func (s AnotherScale) IntervalStrings() []string {
+	panic("not implemented")
+}
+
+func Test_ReturnsEmptyScalaFileWhenUnsupportedScaleProvided(t *testing.T) {
+	// Given
+	scale := AnotherScale{}
+
+	// When
+	scalaFile := NewScalaScaleFileFromScale("not-important.scl", scale)
+
+	// Then
+	assert.Empty(t, scalaFile)
+}
