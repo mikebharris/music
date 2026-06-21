@@ -212,7 +212,7 @@ func NewHarmonicSeriesScale(partials uint) JustScale {
 			}
 			intervals = append(intervals, Octave())
 			SortIntervals(intervals)
-			return intervals
+			return selectJustestIntervals(intervals)
 		},
 	}
 }
@@ -313,7 +313,10 @@ func compute5LimitPythagoreanIntervals() []JustInterval {
 }
 
 func computeJustScale(multipliers [][]uint, filter intervalFilterFunction) []JustInterval {
-	poolOfPotentialIntervals := justIntervalsFromMultipliers(multipliers, filter)
+	return selectJustestIntervals(justIntervalsFromMultipliers(multipliers, filter))
+}
+
+func selectJustestIntervals(poolOfPotentialIntervals []JustInterval) []JustInterval {
 	var preferredIntervals = []JustInterval{Unison()}
 	centsInOctave := 1200.0
 	for r := 50.0; r <= centsInOctave; r += 100 {
@@ -338,7 +341,6 @@ func computeJustScale(multipliers [][]uint, filter intervalFilterFunction) []Jus
 		}
 		preferredIntervals = append(preferredIntervals, chosenInterval)
 	}
-
 	return preferredIntervals
 }
 
