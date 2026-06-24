@@ -1,6 +1,7 @@
 package scala
 
 import (
+	"errors"
 	"strings"
 	"testing"
 
@@ -35,6 +36,115 @@ func Test_ShouldGenerateScalaFileForPythagorean3LimitScale(t *testing.T) {
 	assert.Equal(t, "16/9", contents[15])
 	assert.Equal(t, "243/128", contents[16])
 	assert.Equal(t, "2/1", contents[17])
+}
+
+func Test_ShouldGeneratePythagorean3LimitScaleFromScalaFile(t *testing.T) {
+	// Given
+	scalaFile :=
+		"! pythagorean-3-limit.scl\n" +
+			"!\n" +
+			"13\n" +
+			"256/243\n" +
+			"9/8\n" +
+			"32/27\n" +
+			"81/64\n" +
+			"4/3\n" +
+			"1024/729\n" +
+			"729/512\n" +
+			"3/2\n" +
+			"128/81\n" +
+			"27/16\n" +
+			"16/9\n" +
+			"243/128\n" +
+			"2/1\n"
+
+	// When
+	scale, err := NewJustScaleFromScalaFile(scalaFile)
+
+	// Then
+	assert.Nil(t, err)
+	assert.Equal(t, 13, len(scale.Intervals()))
+	assert.Equal(t, music.NewInterval(256, 243), scale.Intervals()[0])
+	assert.Equal(t, music.NewInterval(9, 8), scale.Intervals()[1])
+	assert.Equal(t, music.NewInterval(32, 27), scale.Intervals()[2])
+	assert.Equal(t, music.NewInterval(2, 1), scale.Intervals()[12])
+}
+
+func Test_ShouldReturnErrorIfSpecifiedNumberOfIntervalsDoesNotMatchCountOfConvertedIntervals(t *testing.T) {
+	// Given
+	scalaFile :=
+		"! pythagorean-3-limit-missing-notes.scl\n" +
+			"!\n" +
+			"13\n" +
+			"2/1\n"
+
+	//When
+	scale, err := NewJustScaleFromScalaFile(scalaFile)
+
+	// Then
+	assert.NotNil(t, err)
+	assert.Equal(t, errors.New("number of intervals specified in Scala file does not number of intervals collected: 13 vs 1"), err)
+	assert.Empty(t, scale)
+}
+
+func Test_ShouldReturnErrorFileDoesNotSpecifyNumberOfIntervals(t *testing.T) {
+	// Given
+	scalaFile :=
+		"! pythagorean-3-limit-missing-number-of-intervals.scl\n" +
+			"!\n" +
+			"2/1\n"
+
+	//When
+	scale, err := NewJustScaleFromScalaFile(scalaFile)
+
+	// Then
+	assert.NotNil(t, err)
+	assert.Equal(t, errors.New("number of intervals specified in Scala file does not number of intervals collected: 0 vs 1"), err)
+	assert.Empty(t, scale)
+}
+
+func Test_ShouldReturnErrorIfScalaFileIsEmpty(t *testing.T) {
+	// Given
+	scalaFile := ""
+
+	//When
+	scale, err := NewJustScaleFromScalaFile(scalaFile)
+
+	// Then
+	assert.NotNil(t, err)
+	assert.Equal(t, errors.New("the Scala file is empty, nothing to convert"), err)
+	assert.Empty(t, scale)
+}
+
+func Test_ShouldReturnErrorIfScalaFileContainsTemperedIntervals(t *testing.T) {
+	// Given
+	scalaFile :=
+		"! scala-file-with-tempered-intervals.scl\n" +
+			"!\n" +
+			"1\n" +
+			"1200.0\n"
+
+	//When
+	scale, err := NewJustScaleFromScalaFile(scalaFile)
+
+	// Then
+	assert.NotNil(t, err)
+	assert.Equal(t, errors.New("number of intervals specified in Scala file does not number of intervals collected: 1 vs 0"), err)
+	assert.Empty(t, scale)
+}
+
+func Test_ShouldReturnErrorIfScalaFileContainsNoIntervals(t *testing.T) {
+	// Given
+	scalaFile :=
+		"! scala-file-with-only-comments.scl\n"
+
+	//When
+	scale, err := NewJustScaleFromScalaFile(scalaFile)
+
+	// Then
+	assert.NotNil(t, err)
+	assert.Equal(t, errors.New("the Scala file does not contain any intervals"), err)
+	assert.Empty(t, scale)
 }
 
 func Test_ShouldGenerateScalaFileForTwelveToneEqualTemperamentScale(t *testing.T) {
