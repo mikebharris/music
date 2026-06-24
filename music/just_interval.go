@@ -13,10 +13,17 @@ type JustInterval struct {
 	name        string
 }
 
-func NewInterval(numerator, denominator uint) JustInterval {
+// NewJustInterval returns a new just interval from the specified numerator and denominator
+func NewJustInterval(numerator, denominator uint) JustInterval {
 	return JustInterval{numerator: numerator, denominator: denominator}.Simplify()
 }
 
+// NewInterval is an alias for NewJustInterval
+func NewInterval(numerator, denominator uint) JustInterval {
+	return NewJustInterval(numerator, denominator)
+}
+
+// Numerator returns the numerator of a just interval
 func (i JustInterval) Numerator() uint {
 	return i.numerator
 }

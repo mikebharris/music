@@ -913,6 +913,37 @@ func Test_newInterval(t *testing.T) {
 	}
 }
 
+func Test_newJustInterval(t *testing.T) {
+	type args struct {
+		numerator   uint
+		denominator uint
+	}
+	tests := []struct {
+		name string
+		args args
+		want JustInterval
+	}{
+		{
+			name: "Create new interval representing a perfect fifth",
+			args: args{
+				numerator:   3,
+				denominator: 2,
+			},
+			want: JustInterval{
+				numerator:   3,
+				denominator: 2,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NewJustInterval(tt.args.numerator, tt.args.denominator); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("newJustInterval() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func Test_sortIntervals(t *testing.T) {
 	type args struct {
 		intervals []JustInterval
