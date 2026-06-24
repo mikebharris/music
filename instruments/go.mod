@@ -3,7 +3,7 @@ module github.com/mikebharris/music/instruments
 go 1.26.2
 
 require (
-	github.com/mikebharris/music/music v0.4.7
+	github.com/mikebharris/music/music v0.5.0
 	github.com/stretchr/testify v1.11.1
 )
 
