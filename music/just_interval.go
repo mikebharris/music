@@ -244,6 +244,7 @@ var intervalNames = []JustInterval{
 	{531441, 524288, "Pythagorean Comma"},
 	{32805, 32768, "Schisma"},
 	{225, 224, "Septimal Kleisma"},
+	{2048, 2025, "Diaschisma"},
 	{81, 80, "Syntonic Comma"},
 	{80, 81, "Grave Unison"},
 	{128, 125, "Dieses (Diminished Second)"},
